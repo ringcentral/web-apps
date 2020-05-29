@@ -1,0 +1,32 @@
+{
+  "name": "@ringcentral/web-apps-sync-iframe",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "x-browser": "dist/ringcentral-web-apps-iframe.js",
+  "scripts": {
+    "build": "yarn build:tsc && yarn build:webpack",
+    "build:tsc": "tsc",
+    "build:webpack": "webpack --progress",
+    "start": "concurrently yarn:start:*",
+    "start:tsc": "yarn build:tsc --watch --preserveWatchOutput",
+    "start:webpack": "yarn build:webpack --watch"
+  },
+  "dependencies": {
+    "@ringcentral/web-apps-common": "*",
+    "@ringcentral/web-apps-sync": "*",
+    "iframe-resizer": "4.1.1"
+  },
+  "devDependencies": {
+    "@types/history": "4.7.4",
+    "concurrently": "5.0.2",
+    "terser-webpack-plugin": "2.3.2",
+    "ts-loader": "6.0.4",
+    "typescript": "3.8.3",
+    "webpack": "4.41.5",
+    "webpack-cli": "3.3.10"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

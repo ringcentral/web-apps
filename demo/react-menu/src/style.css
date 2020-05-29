@@ -1,0 +1,9 @@
+/* global style won't work here so we re-implement it */
+:host {
+    font-size: 14px;
+}
+
+.nav-link.active {
+    border-bottom: 2px solid #007bff;
+    margin-bottom: -2px;
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@ringcentral/web-apps-common",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "x-browser": "dist/ringcentral-web-apps-common.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "yarn build --watch --preserveWatchOutput"
+  },
+  "dependencies": {
+    "custom-event-polyfill": "1.0.7"
+  },
+  "devDependencies": {
+    "typescript": "3.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

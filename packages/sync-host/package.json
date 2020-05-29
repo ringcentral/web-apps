@@ -1,0 +1,22 @@
+{
+  "name": "@ringcentral/web-apps-sync-host",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "yarn build --watch --preserveWatchOutput"
+  },
+  "dependencies": {
+    "@ringcentral/web-apps-common": "*",
+    "@ringcentral/web-apps-sync": "*",
+    "iframe-resizer": "4.1.1"
+  },
+  "devDependencies": {
+    "@types/history": "4.7.4",
+    "typescript": "3.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

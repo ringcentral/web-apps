@@ -1,0 +1,22 @@
+{
+  "name": "@web-apps/demo-react-menu-iframe",
+  "version": "0.6.0",
+  "private": true,
+  "scripts": {
+    "start": "PORT=$REACT_APP_REACT_MENU_IFRAME_PORT react-scripts start"
+  },
+  "browserslist": [
+    "IE 11"
+  ],
+  "dependencies": {
+    "@ringcentral/web-apps-react": "*",
+    "@ringcentral/web-apps-sync-iframe": "*",
+    "bootstrap": "4.4.1",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "react-router-dom": "5.1.2"
+  },
+  "devDependencies": {
+    "react-scripts": "3.0.1"
+  }
+}

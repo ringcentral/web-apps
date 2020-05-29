@@ -1,0 +1,26 @@
+{
+  "name": "@web-apps/demo-host",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "PORT=$REACT_APP_HOST_PORT react-scripts start"
+  },
+  "browserslist": [
+    "IE 11"
+  ],
+  "dependencies": {
+    "@ringcentral/sdk": "4.0.0-alpha.6",
+    "@ringcentral/web-apps-host-css": "*",
+    "@ringcentral/web-apps-host-react": "*",
+    "@webcomponents/webcomponentsjs": "2.2.10",
+    "babel-polyfill": "6.26.0",
+    "bootstrap": "4.4.1",
+    "history": "4.9.0",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "react-router-dom": "5.1.2"
+  },
+  "devDependencies": {
+    "react-scripts": "3.0.1"
+  }
+}

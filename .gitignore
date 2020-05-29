@@ -1,0 +1,16 @@
+.DS_Store
+.idea
+.cache
+/.env
+lerna-debug*
+node_modules
+npm-debug*
+package-lock.json
+package.json.lerna_backup
+demo/*/build
+demo/*/dist
+packages/*/dist
+packages/*/es
+packages/*/lib
+yarn-debug*
+yarn-error*

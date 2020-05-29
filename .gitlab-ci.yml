@@ -1,0 +1,49 @@
+# https://hub.docker.com/r/library/node/tags/
+image: node:lts
+
+stages:
+  - test
+  - publish
+
+before_script:
+  - npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+  - npm config set unsafe-perm=true
+
+test:
+  stage: test
+  script:
+    # CI does not run postinstall automatically so we explicitly disable scripts and run postinstall manually
+    # also hoist can't be combined with Lerna CI https://github.com/lerna/lerna/issues/1324
+    - yarn install
+    - yarn lint:all
+    - yarn build
+    - yarn test
+    - yarn test:coverage
+  artifacts:
+    paths:
+      - "packages/*/es"
+      - "packages/*/dist"
+      - "packages/*/lib"
+    expire_in: 1 day
+
+canary:
+  stage: publish
+  dependencies:
+    - test
+  script:
+    - npm install lerna  # we don't build anything so we can just install lerna
+    - npm run publish:release -- --canary --preid=canary.$CI_PIPELINE_IID --yes  # note that we have build artifacts, on this step we publish them
+  only:
+    - master
+  except:
+    - tags
+
+release:
+  stage: publish
+  dependencies:
+    - test
+  script:
+    - npm install lerna  # we don't build anything so we can just install lerna
+    - npm run publish:release -- $CI_COMMIT_TAG --yes  # note that we have build artifacts, on this step we publish them
+  only:
+    - tags

@@ -1,0 +1,26 @@
+{
+  "name": "@ringcentral/web-apps-react",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "yarn build --watch --preserveWatchOutput"
+  },
+  "dependencies": {
+    "@ringcentral/web-apps-common": "*"
+  },
+  "devDependencies": {
+    "@types/history": "4.7.4",
+    "@types/react": "16.9.11",
+    "@types/react-router": "5.1.4",
+    "typescript": "3.8.3"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-router": "*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

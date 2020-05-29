@@ -1,0 +1,19 @@
+{
+  "name": "@web-apps/demo-admin",
+  "version": "0.6.0",
+  "private": true,
+  "scripts": {
+    "start": "http-server -p $REACT_APP_ADMIN_PORT --cors"
+  },
+  "dependencies": {
+    "@ringcentral/web-apps-sync-iframe": "*"
+  },
+  "devDependencies": {
+    "http-server": "0.11.1"
+  },
+  "workspaces": {
+    "nohoist": [
+      "@ringcentral/web-apps-sync-iframe"
+    ]
+  }
+}

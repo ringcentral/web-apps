@@ -1,0 +1,30 @@
+{
+  "extends": [
+    "ringcentral-typescript"
+  ],
+  "rules": {
+    "import/no-default-export": "off",
+    "import/no-unresolved": "off", // to capture direct deps in TS
+    "import/no-webpack-loader-syntax": "off", // !raw-loader!./shadow.css
+    "no-console": "off",
+    "no-undef": "off", //FIXME @see https://github.com/eslint/typescript-eslint-parser/issues/75
+    "react/display-name": "off", // export default () => { ... }
+    "react/sort-comp": "off",
+    "react/prop-types": "off",
+    "ringcentral/specified-comment-with-task-id": "warn",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-var-requires": "off" // conditional require in Externals
+  },
+  "env": {
+    "browser": true,
+    "mocha": true,
+    "node": true
+  },
+  "settings": {
+    "react": {
+      "version": "16.6.0"
+    }
+  }
+}

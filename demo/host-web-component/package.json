@@ -1,0 +1,20 @@
+{
+  "name": "@web-apps/demo-host-web-component",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "PORT=$REACT_APP_HOST_WC_PORT react-scripts start"
+  },
+  "browserslist": [
+    "IE 11"
+  ],
+  "dependencies": {
+    "@ringcentral/web-apps-host-css": "*",
+    "@ringcentral/web-apps-host-web-component": "*",
+    "@webcomponents/webcomponentsjs": "2.2.10",
+    "bootstrap": "4.4.1"
+  },
+  "devDependencies": {
+    "react-scripts": "3.0.1"
+  }
+}

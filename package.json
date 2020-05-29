@@ -1,0 +1,39 @@
+{
+  "name": "@ringcentral/web-apps",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "clean": "yarn clean:packages && yarn clean:cache && yarn clean:self",
+    "clean:packages": "lerna clean --yes",
+    "clean:cache": "lerna exec -- rm -rf dist lib .cache false",
+    "clean:self": "rm -rf node_modules",
+    "test": "echo Not implemented yet...",
+    "test:quick": "echo Not implemented yet...",
+    "test:coverage": "echo Not implemented yet...",
+    "build": "lerna run build --stream",
+    "start": "yarn build && yarn start:quick",
+    "start:quick": "dotenv lerna run start -- --parallel",
+    "publish:release": "lerna publish --tag-version-prefix=\"\" --force-publish=* --no-push --no-git-tag-version",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint --fix",
+    "lint:all": "yarn lint './*(demo|packages)/*/src/**/*.{jsx,js,tsx,ts}'",
+    "lint:staged": "lint-staged"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv-cli": "2.0.1",
+    "eslint": "5.16.0",
+    "eslint-config-ringcentral-typescript": "1.0.0",
+    "husky": "3.0.0",
+    "lerna": "3.15.0",
+    "lint-staged": "9.2.0",
+    "typescript": "3.8.3"
+  },
+  "workspaces": {
+    "packages": [
+      "demo/*",
+      "packages/*"
+    ]
+  }
+}

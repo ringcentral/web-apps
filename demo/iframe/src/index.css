@@ -1,0 +1,13 @@
+html, body {
+    font-size: 14px;
+}
+
+ul.nav-tabs {
+    margin-bottom: 1rem;
+}
+
+/* This hack is needed to make sure popup is always contained within the IFRAME, bc popup cannot stretch IFRAMEs */
+.modal-body {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}

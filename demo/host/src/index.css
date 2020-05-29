@@ -1,0 +1,11 @@
+html, body {
+    font-size: 14px;
+}
+
+.app-iframe {
+    border: 1px solid red;
+}
+
+.card, .navbar-container {
+    margin-bottom: 1rem;
+}

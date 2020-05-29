@@ -1,0 +1,27 @@
+{
+  "name": "@ringcentral/web-apps-host-react",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "yarn build --watch --preserveWatchOutput"
+  },
+  "dependencies": {
+    "@ringcentral/web-apps-common": "*",
+    "@ringcentral/web-apps-host": "*",
+    "@ringcentral/web-apps-react": "*",
+    "@ringcentral/web-apps-sync-react": "*"
+  },
+  "devDependencies": {
+    "@types/react": "16.9.11",
+    "react": "16.8.6",
+    "typescript": "3.8.3"
+  },
+  "peerDependencies": {
+    "react": ">=15.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

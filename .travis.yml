@@ -1,0 +1,33 @@
+language: node_js
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+    - packages/*/node_modules
+
+node_js: 13.9
+
+before_install: npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+
+before_script:
+- DEBUG=eslint:cli-engine yarn lint:all
+- yarn build
+
+deploy:
+- provider: script
+  script: yarn publish:release ${TRAVIS_TAG} --yes
+  skip_cleanup: true
+  on:
+    all_branches: true
+    condition: $TRAVIS_TAG != "" && $TRAVIS_TAG != *"-"*
+    repo: ringcentral/ringcentral-web-phone
+- provider: script
+  script: yarn publish:release ${TRAVIS_TAG} --yes --dist-tag next
+  skip_cleanup: true
+  on:
+    all_branches: true
+    condition: $TRAVIS_TAG == *"-"*
+    repo: ringcentral/ringcentral-web-phone
+
+after_success: yarn test:coverage
