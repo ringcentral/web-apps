@@ -52,4 +52,8 @@ export const appRegistry = {
             url + `/main.js`,
         ],
     },
+    federated: {
+        type: 'federated',
+        getUrl: async (url = `http://localhost:${process.env.REACT_APP_FED_PORT}`) => url + '/remoteEntry.js',
+    },
 };

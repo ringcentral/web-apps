@@ -1,6 +1,6 @@
 import React, {FC, useEffect, useMemo, useCallback, useReducer, ReactElement, forwardRef, memo} from 'react';
 import {createApp, App} from '@ringcentral/web-apps-host';
-import {CustomElementComponent, IFrameComponent, DivComponent} from './Components';
+import {CustomElementComponent, IFrameComponent, DivComponent, FederatedComponent} from './Components';
 
 export interface ApplicationOptions {
     id: string;
@@ -16,6 +16,8 @@ const getComponent = (type: string): any => {
             return IFrameComponent;
         case 'global':
             return DivComponent;
+        case 'federated':
+            return FederatedComponent;
         default:
             return null;
     }

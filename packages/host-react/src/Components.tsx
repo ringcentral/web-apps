@@ -1,7 +1,7 @@
-import React, {FC, forwardRef, useEffect, useRef} from 'react';
+import React, {FC, forwardRef, useCallback, useEffect, useRef} from 'react';
 import {IFrame, useCombinedRefs} from '@ringcentral/web-apps-sync-react';
 import {getAppCallback} from '@ringcentral/web-apps-common';
-import {App, ScriptApp} from '@ringcentral/web-apps-host';
+import {App, ScriptApp, FederatedApp} from '@ringcentral/web-apps-host';
 
 export interface Props {
     app: App;
@@ -32,10 +32,14 @@ export const IFrameComponent: FC<Props> = forwardRef(function IFrameComponent({a
 export const DivComponent: FC<Props> = forwardRef<any, Props>(function DivComponent({app: {id}, ...props}, ref) {
     const div = useRef<HTMLDivElement>(null);
     const combinedRef = useCombinedRefs<HTMLDivElement>(ref, div);
+    useEffect(() => getAppCallback(id)(combinedRef.current), [combinedRef, id]);
+    return <div ref={combinedRef} {...props} />;
+});
 
-    useEffect(() => {
-        return getAppCallback(id)(combinedRef.current);
-    }, [combinedRef, id]);
-
+export const FederatedComponent: FC<Props> = forwardRef(function FederatedComponent({app, ...props}, ref: any) {
+    const {id, callback} = app as FederatedApp;
+    const div = useRef<HTMLDivElement>(null);
+    const combinedRef = useCombinedRefs<HTMLDivElement>(ref, div);
+    useEffect(() => callback(combinedRef.current), [callback, combinedRef, id]);
     return <div ref={combinedRef} {...props} />;
 });

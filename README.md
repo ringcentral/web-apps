@@ -1,19 +1,22 @@
-Service Web Apps
-================
+Web Apps
+========
 
-This package provides support for embeddable apps infrastructure. This means that Host application can delegate the actual features to some other apps and provide seamless navigation and UX between those apps. Applications can be implemented using any JS framework and can be deployed anywhere, can have own release cycle. Host has to be a React application.
+This framework provides support for embeddable apps infrastructure aka Microfrontends. Host application can delegate the actual features to other apps and provide seamless navigation and UX between those apps. Applications can be implemented using any JS framework and can be deployed anywhere, can have own release cycle. Host can be a React application or any other JS framework thanks to Web Components support.
+
+Common pitfall of all Microfrontends is inability to efficiently and seamlessly share dependencies between host and apps. Web Apps framework is written with built-in support of [Webpack Module Federation](https://webpack.js.org/concepts/module-federation), so apps can declare and share dependencies in a standard way. 
 
 - Location synchronization between app and host
 - Ability to deep-link "app to app" or "app to host" or "host to app"
 - Consistent event-based interaction between apps and host
 - IFrame resize based on content of IFrame
-- Popup support
+- IFrame popup support
 - Maximum adherence to Web Standards
 - 3-legged auth support
 - Written in TypeScript
 - React and Web Component host helpers
+- Unlimited nesting of apps within other apps, e.g. each app can become a host for more apps
 
-By default one app at a time has to be rendered in main content area in order to have full location sync support, but host can render may apps at the same time if needed, but then it has to tell which one is "main" (e.g. the one that controls location bar).
+Quick remark. This framework is most useful when you have a system where apps can be written using different frameworks and you need a layer to orchestrate it. There's no need for this framework if you only deal with React host and React apps, Module Federation will work just fine for you. However, if you have to show `iframe`-based apps, or, say, Vue or Angular app inside React app, the Web Apps framework is a way to go.
 
 ## TOC
 
@@ -30,10 +33,12 @@ By default one app at a time has to be rendered in main content area in order to
 - [Apps](#apps)
     - [Web Component Apps](#web-component-apps)
         - [React-based Web Component Apps](#react-based-web-component-apps)
-    - [IFrame Apps](#iframe-apps)
-        - [React-based IFrame Apps](#react-based-iframe-apps)
+    - [Webpack Module Federation Apps](#webpack-module-federation-apps)
+        - [React-based Webpack Module Federation Apps](#react-based-webpack-module-federation-apps)
     - [Global Apps](#global-apps)
         - [React-based Global Apps](#react-based-global-apps)
+    - [IFrame Apps](#iframe-apps)
+        - [React-based IFrame Apps](#react-based-iframe-apps)
 - [Demo](#demo)
 - [Upgrading](#upgrading)
 
@@ -53,14 +58,16 @@ Library loads scripts and styles for the App, manages the lifecycle of Custom El
 
 You can use the following table when choosing which app type better suits for your case:
 
-|           | IFrame | Web Components | Global |
-|-----------|--------|----------------|--------|
-| Type in config | `iframe` | `script` | `global` |
-| Isolation | Full: CSS, scripts | :warning: Partial: CSS when not polyfilled | :warning: No isolation |
-| Hot Module Replacement | Full support | :warning: Requires custom tailoring | :warning: Same as WC | 
-| Popups | :warning: Limited to size of `iframe`, popup body must scroll | No limitations | Same as WC |
-| Navigation | Any | :warning: HTML5 only, must have prefix same as in host | Same as WC |
-| 3rd Party | Only choice | :warning: Forbidden to use for 3rd Parties | :warning: Same as WC |
+|  | Module Federation | IFrame | Web Components | Global |
+|-|-|-|-|-|
+| Type in config | `federated` | `iframe` | `script` | `global` |
+| Isolation | :warning: No isolation | Full: CSS, scripts | :warning: Partial: CSS when not polyfilled | :warning: No isolation |
+| Hot Module Replacement | :warning: Requires custom tailoring | Full support | :warning: Requires custom tailoring | :warning: Requires custom tailoring |
+| Popups | No limitations | :warning: Limited to size of `iframe`, popup body must scroll | No limitations | No limitations |
+| Navigation | No limitations | No limitations, `iframe` path will be synced as hosts's `hash` | No limitations | No limitations |
+| 3rd Party | :warning: Forbidden to use for 3rd Parties | Only choice | :warning: Forbidden to use for 3rd Parties | :warning: Forbidden to use for 3rd Parties |
+
+Framework provides ability to load apps developed by 3rd parties, which has to be used with caution. Best isolation is provided by `iframe` mode.
 
 ## How It Works
 
@@ -86,7 +93,7 @@ Events are instances of `CustomEvent` class and have `detail` property that carr
 - `location` — special event that tells Host to open certain location, *handled automatically, no need to capture*
 - `state` — special event to sync location between Host and IFrame, *handled automatically, no need to capture*
 
-### IFrame retransmission flow from iframe to host
+### IFrame retransmission flow from `iframe` to host
 
 1. IFrame app emits `CustomEvent` on synthetic `iframe` node
 2. IFrame SDK listens to event and retransmits it over `postMessage` to Host
@@ -111,7 +118,7 @@ We have to use either https://github.com/github/babel-plugin-transform-custom-el
 `@webcomponents/webcomponentsjs/custom-elements-es5-adapter` on host-level because app-level Babel-transpiled ES5
 classes can't properly inherit browser's native ES6 classes.
 
-There's no need to add polyfills to Web Component apps, IFrame apps has to manage their polyfills individually.
+There's no need to add polyfills to Web Component apps, IFrame apps has to manage their polyfills individually. Web Components polyfills are not needed if you are not using WC-based apps.
 
 ## Host
 
@@ -262,7 +269,7 @@ If you're using hash location you may skip this part.
 
 Since `history` library and `react-router` do not support listening to global `window.history` object due to lack of `push` and `replace` events on the latter we need to use custom `LocationSync`.
 
-We suggest to put it in the Router config at the very top of the application:
+We suggest putting it in the Router config at the very top of the application:
 
 ```js
 import React from 'react';
@@ -335,6 +342,8 @@ You can use standalone [react-devtools](https://github.com/facebook/react/tree/m
 You can use standalone [react-devtools](https://github.com/facebook/react/tree/master/packages/react-devtools) version to access your guest application.
 
 ##### Global
+
+:warning: [Module Federation](https://webpack.js.org/concepts/module-federation/) is a much better way to achieve the same. However you are using Webpack older than version 5 you can use this trick.
 
 Devtools will work perfectly if your host app is **not** build with React.
 
@@ -687,6 +696,128 @@ As you see the code is identical to the React-based Host code.
 
 You may use React Router inside such apps, it will track same location as Host app, for instance one of your Apps can be a Menu and another App can be Content area and Host will render both separately.
 
+### Webpack Module Federation Apps
+
+If messing with Web Components is too much, you can use a simpler way, but it would have less isolation due to complete lack of Shadow DOM and Shadow CSS.
+
+Using [Webpack Module Federation](https://webpack.js.org/concepts/module-federation/) we export default callback from the `./index` federated module, this callback can do something with the mounted node.
+
+In this mode app's `webpack-config.js` has to be configured in a following way:
+
+```js
+const {ModuleFederationPlugin} = require('webpack').container;
+const path = require('path');
+
+module.exports = {
+    ...,
+    plugins: [
+        new ModuleFederationPlugin({
+            name: 'web_app_federated', // ID on host must match: federated
+            library: {type: 'var', name: 'web_app_federated'}, // ID on host must match: federated
+            filename: 'remoteEntry.js',
+            exposes: {
+                // note that host will pick up './index', this is public
+                // './src/index' is your internal detail
+                './index': './src/index',
+            },
+            shared: {
+                'react-dom': 'react-dom',
+                moment: '^2.24.0',
+                react: {
+                    import: 'react',
+                    shareKey: 'react',
+                    shareScope: 'default',
+                    singleton: true,
+                },
+            },
+        }),
+    ],
+    ...,
+};
+```
+
+Now in `src/index.js` may we only need to export default function that will be used as callback to mount the app:
+
+```js
+export default (node) => {
+    // do something with the provided node
+    node.innerText = Date.now();
+    return () => {
+        // unmount handler
+    };
+};
+```
+
+#### React-based Webpack Module Federation Apps
+
+App code is almost the same as in [React-based Web Component example](#react-based-web-component-apps), but skip the `customElement.define` part.
+
+```js
+import App from './App';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+
+export default (node) => { // ID on host must match: global
+
+    const onChange = () => render(<App authtoken={node.getAttribute('authtoken')} node={node}/>, node);
+
+    const observer = new MutationObserver(mutations =>
+        mutations.forEach(
+            // re-render on changes
+            mutation => mutation.type === 'attributes' && onChange(), // you may also accumulate this instead of calling every time
+        ),
+    );
+
+    node.addEventListener('remove', () => {
+        unmountComponentAtNode(node);
+        observer.disconnect();
+    });
+
+    observer.observe(node, {attributes: true});
+
+    // initial render
+    onChange();
+
+    // unmount handler
+    return () => ReactDOM.unmountComponentAtNode(node);
+
+};
+```
+
+### Global Apps
+
+This kind of apps is very similar to [Webpack Module Federation Apps](#webpack-module-federation-apps) but the registration is a bit different, it uses a JSONP-style function: 
+
+```js
+import {registerAppCallback} from "@ringcentral/web-apps-common";
+
+registerAppCallback('global', (node) => { // ID on host must match: global
+    // do something with the provided node
+    node.innerText = Date.now();
+    return () => {
+        // unmount handler
+    };
+});
+```
+
+:warning: **If you're using Webpack to build Global apps make sure you set `output.jsonpFunction` to something unique to your app so that it will not clash with host's or other apps JSONP function.**
+
+#### React-based Global Apps
+
+```js
+import React from "react";
+import {render, unmountComponentAtNode} from "react-dom";
+import {registerAppCallback} from "@ringcentral/web-apps-react";
+import App from "./App";
+
+registerAppCallback('global', (node) => { // ID on host must match: global
+    ReactDOM.render(<App foo={node.getAttribute('foo')} />, node);
+    return () => ReactDOM.unmountComponentAtNode(node);
+});
+```
+
 ### IFrame Apps
 
 #### Location Sync
@@ -814,66 +945,6 @@ const sync = new IFrameSync({
 });
 ```
 
-### Global Apps
-
-This kind of apps is very similar to Web Components Apps but the registration is a bit different. 
-
-```js
-import {registerAppCallback} from "@ringcentral/web-apps-common";
-
-console.log('Registered');
-
-var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-
-registerAppCallback('global', (node) => { // ID on host must match: global
-    // do something with the provided node
-    node.innerText = Date.now();
-    return () => {
-        // unmount handler
-    };
-});
-```
-
-:warning: **If you're using Webpack to build Global apps make sure you set `output.jsonpFunction` to something unique to your app so that it will not clash with host's or other apps JSONP function.**
-
-#### React-based Global Apps
-
-```js
-import React from "react";
-import {render, unmountComponentAtNode} from "react-dom";
-import {registerAppCallback} from "@ringcentral/web-apps-react";
-import App from "./App";
-
-console.log('Registered');
-
-var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-
-registerAppCallback('global', (node) => { // ID on host must match: global
-
-    const onChange = () => render(<App authtoken={node.getAttribute('authtoken')} node={node}/>, node);
-
-    const observer = new MutationObserver(mutations =>
-        mutations.forEach(
-            // re-render on changes
-            mutation => mutation.type === 'attributes' && onChange(), // you may also accumulate this instead of calling every time
-        ),
-    );
-
-    node.addEventListener('remove', () => {
-        unmountComponentAtNode(node);
-        observer.disconnect();
-    });
-
-    observer.observe(node, {attributes: true});
-
-    // initial render
-    onChange();
-
-});
-```
-
-App code is almost the same as in [React-based Web Component example](#react-based-web-component-apps), but skip the `customElement.define` part.
-
 ## Repo Structure
 
 - `demo`
@@ -937,11 +1008,11 @@ no more messages will pop in terminal.
 
 ## Upgrading
 
-### From `6.x` to `7.x`
+### From `0.6.x` to `0.7.x`
 
 1. `<Application nodeRef={xxx}/>` will not work, use `<Application>{({node}) => { ... }}</Application>`
 
-### From `4.x` to `5.x`
+### From `0.4.x` to `0.5.x`
 
 1. Remove `makeHistoryFromRouter` or anything else that normalizes `history` on host, lib now does it internally
 2. Rename `registerApp` has been renamed: `import {registerAppCallback} from '@ringcentral/web-apps-common';`

@@ -4,6 +4,7 @@ import App from './App';
 import Index from './Index';
 import {MenuApp} from './MenuApp';
 import {MenuAppIframe} from './MenuAppIframe';
+import {FederatedApp} from './FederatedApp';
 
 const logout = () => alert('Logout');
 
@@ -16,6 +17,8 @@ const Layout = () => (
             <Route path="/application/apps" component={Index} exact />
             <Route path="/application/apps/:appId" component={App} />
         </Switch>
+
+        <FederatedApp />
     </>
 );
 

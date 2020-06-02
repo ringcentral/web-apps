@@ -121,6 +121,24 @@ export class IFrameApp extends App {
     public async load() {}
 }
 
+export class FederatedApp extends JSApp {
+    public callback;
+    public async load() {
+        const scope = `web_app_${this.id}`;
+        const module = './index'; //FIXME Configurable or let it be as per convention?
+
+        await super.load();
+        // Initializes the share scope. This fills it with known provided modules from this build and all remotes
+        // @ts-ignore
+        await __webpack_init_sharing__('default');
+        // @ts-ignore
+        await  window[scope].init(__webpack_share_scopes__.default); //eslint-disable-line
+        // @ts-ignore
+        const factory = await window[scope].get(module);
+        this.callback = factory().default;
+    }
+}
+
 export const createApp = async ({id, url, type}: CreateAppInit) => {
     const key = makeKey({id, url, type});
 
@@ -134,6 +152,9 @@ export const createApp = async ({id, url, type}: CreateAppInit) => {
                 break;
             case 'global':
                 cache[key] = new GlobalApp({id, url});
+                break;
+            case 'federated':
+                cache[key] = new FederatedApp({id, url});
                 break;
             default:
                 throw new Error('Unknown app type ' + type);
