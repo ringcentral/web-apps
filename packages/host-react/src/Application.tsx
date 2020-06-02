@@ -1,12 +1,6 @@
 import React, {FC, useEffect, useMemo, useCallback, useReducer, ReactElement, forwardRef, memo} from 'react';
-import {createApp, App} from '@ringcentral/web-apps-host';
+import {createApp, App, CreateAppInit} from '@ringcentral/web-apps-host';
 import {CustomElementComponent, IFrameComponent, DivComponent} from './Components';
-
-export interface ApplicationOptions {
-    id: string;
-    type: string;
-    url: string | string[];
-}
 
 const getComponent = (type: string): any => {
     switch (type) {
@@ -21,7 +15,7 @@ const getComponent = (type: string): any => {
     }
 };
 
-interface State extends ApplicationOptions {
+interface State extends CreateAppInit {
     app?: App;
     error?: Error;
     node?: HTMLElement;
@@ -58,7 +52,7 @@ export interface ApplicationReturn {
     node?: HTMLElement;
 }
 
-export const useApplication = ({id, url, type}: ApplicationOptions): ApplicationReturn => {
+export const useApplication = ({id, url, type, options}: CreateAppInit): ApplicationReturn => {
     const [{error, app, node, type: storedType}, dispatch] = useReducer(reducer, initialState); // type is in store to make sure it's always in sync with app
 
     // Create App instance
@@ -72,7 +66,7 @@ export const useApplication = ({id, url, type}: ApplicationOptions): Application
         (async () => {
             if (!id || !url || !type) return; // maybe console.warn?
             try {
-                if (mounted) dispatch({type: 'app', payload: await createApp({id, url, type})});
+                if (mounted) dispatch({type: 'app', payload: await createApp({id, url, type, options})});
             } catch (error) {
                 console.error('HOST: Cannot load app', id, error);
                 if (mounted) dispatch({type: 'error', payload: error});
@@ -80,7 +74,7 @@ export const useApplication = ({id, url, type}: ApplicationOptions): Application
         })();
 
         return () => (mounted = false);
-    }, [id, type, url]);
+    }, [id, options, type, url]);
 
     // Ref
 
@@ -96,41 +90,16 @@ export const useApplication = ({id, url, type}: ApplicationOptions): Application
     return {Component, error, loading, node};
 };
 
-export type ApplicationProps = ApplicationOptions & ApplicationReturn;
+export type ApplicationProps = CreateAppInit & ApplicationReturn;
 
-export const Application: FC<ApplicationOptions & {children: (ApplicationProps) => ReactElement}> = ({
-    id,
-    url,
-    type,
-    children,
-    ...props
-}) => {
-    const appProps = useApplication({id, url, type});
-    return children({
-        ...props,
-        ...appProps,
-        type,
-        id,
-        url,
-    });
-};
+export const Application: FC<CreateAppInit & {children: (ApplicationProps) => ReactElement}> = ({children, ...props}) =>
+    children({...props, ...useApplication(props)});
 
-export const withApplication = (
-    {id: defaultId, url: defaultUrl, type: defaultType}: ApplicationOptions = {
-        id: undefined,
-        url: undefined,
-        type: undefined,
-    },
-) => Cmp => {
-    const WrappedComponent: FC<ApplicationOptions> = ({
-        id = defaultId,
-        url = defaultUrl,
-        type = defaultType,
-        children,
-        ...props
-    }) => {
-        const appProps = useApplication({id, url, type});
-        return <Cmp {...{...props, ...appProps, id, url, type}}>{children}</Cmp>;
+export const withApplication = (defaults: CreateAppInit) => Cmp => {
+    const WrappedComponent: FC<CreateAppInit> = ({children, ...props}) => {
+        const defaultedProps = {...defaults, ...props};
+        const appProps = useApplication(defaultedProps);
+        return <Cmp {...{...defaultedProps, ...appProps}}>{children}</Cmp>;
     };
     WrappedComponent.displayName = `withApplication(${Cmp.displayName || Cmp.name || 'Cmp'})`;
     return WrappedComponent;

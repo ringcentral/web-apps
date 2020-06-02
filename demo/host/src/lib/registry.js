@@ -52,4 +52,20 @@ export const appRegistry = {
             url + `/main.js`,
         ],
     },
+    federation: {
+        type: 'global',
+        getUrl: async (url = `http://localhost:${process.env.REACT_APP_FED_PORT}`) => url + '/remoteEntry.js',
+        options: {
+            federation: true,
+        },
+    },
+    federationDirect: {
+        type: 'global',
+        getUrl: async (url = `http://localhost:${process.env.REACT_APP_FED_PORT}`) => url + '/remoteEntry.js',
+        options: {
+            federation: true,
+            module: './App',
+            scope: 'web_app_federation',
+        },
+    },
 };

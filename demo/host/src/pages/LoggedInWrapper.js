@@ -4,6 +4,8 @@ import App from './App';
 import Index from './Index';
 import {MenuApp} from './MenuApp';
 import {MenuAppIframe} from './MenuAppIframe';
+import {FederationApp} from './FederationApp';
+import {FederationDirectApp} from './FederationDirectApp';
 
 const logout = () => alert('Logout');
 
@@ -16,6 +18,9 @@ const Layout = () => (
             <Route path="/application/apps" component={Index} exact />
             <Route path="/application/apps/:appId" component={App} />
         </Switch>
+
+        <FederationApp />
+        <FederationDirectApp />
     </>
 );
 

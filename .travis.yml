@@ -21,13 +21,13 @@ deploy:
   on:
     all_branches: true
     condition: $TRAVIS_TAG != "" && $TRAVIS_TAG != *"-"*
-    repo: ringcentral/ringcentral-web-phone
+    repo: ringcentral/web-apps
 - provider: script
   script: yarn publish:release ${TRAVIS_TAG} --yes --dist-tag next
   skip_cleanup: true
   on:
     all_branches: true
     condition: $TRAVIS_TAG == *"-"*
-    repo: ringcentral/ringcentral-web-phone
+    repo: ringcentral/web-apps
 
 after_success: yarn test:coverage

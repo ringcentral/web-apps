@@ -30,9 +30,9 @@ const App = ({
     },
 }) => {
     const [authtoken, setAuthToken] = useState('set-by-host');
-    const {id, url, type, error: registryError, loading: registryLoading, origin} = useAppRegistry(appId);
+    const {id, url, type, error: registryError, loading: registryLoading, origin, options} = useAppRegistry(appId);
 
-    const {error: appError, Component, node, loading: appLoading} = useApplication({id, type, url});
+    const {error: appError, Component, node, loading: appLoading} = useApplication({id, type, url, options});
 
     const [popup, setPopup] = useState(false);
     const onPopup = useCallback(event => setPopup(popup => (popup !== event.detail ? event.detail : popup)), []);

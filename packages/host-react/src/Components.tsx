@@ -1,22 +1,30 @@
 import React, {FC, forwardRef, useEffect, useRef} from 'react';
-import {IFrame, useCombinedRefs} from '@ringcentral/web-apps-sync-react';
-import {getAppCallback} from '@ringcentral/web-apps-common';
-import {App, ScriptApp} from '@ringcentral/web-apps-host';
+import {IFrame, IFrameProps, useCombinedRefs} from '@ringcentral/web-apps-sync-react';
+import {App, ScriptApp, GlobalApp} from '@ringcentral/web-apps-host';
 
 export interface Props {
     app: App;
 }
 
-export const CustomElementComponent: FC<Props> = forwardRef(function CustomElementComponent({app, ...props}, ref) {
+export const CustomElementComponent: FC<Props> = forwardRef<any, Props>(function CustomElementComponent(
+    {app, ...props},
+    ref,
+) {
     const {tag} = app as ScriptApp;
     const Tag = tag() as any;
     return <Tag {...props} ref={ref} />;
 });
 
+// eslint-disable-next-line @typescript-eslint/interface-name-prefix
+export interface IFrameComponentProps extends Props, IFrameProps {}
+
 /**
  * @see https://github.com/ReactTraining/react-router/issues/6056 cannot use ref in IFrame...
  */
-export const IFrameComponent: FC<Props> = forwardRef(function IFrameComponent({app: {url, id}, ...props}, ref) {
+export const IFrameComponent: FC<IFrameComponentProps> = forwardRef<any, IFrameComponentProps>(function IFrameComponent(
+    {app: {url, id}, ...props},
+    ref,
+) {
     return (
         <IFrame
             nodeRef={ref}
@@ -29,13 +37,23 @@ export const IFrameComponent: FC<Props> = forwardRef(function IFrameComponent({a
     );
 });
 
-export const DivComponent: FC<Props> = forwardRef<any, Props>(function DivComponent({app: {id}, ...props}, ref) {
-    const div = useRef<HTMLDivElement>(null);
-    const combinedRef = useCombinedRefs<HTMLDivElement>(ref, div);
+export interface DivComponentProps extends Props {
+    direct: boolean;
+}
 
-    useEffect(() => {
-        return getAppCallback(id)(combinedRef.current);
-    }, [combinedRef, id]);
-
-    return <div ref={combinedRef} {...props} />;
+export const DivComponent: FC<DivComponentProps> = forwardRef<any, DivComponentProps>(function DivComponent(
+    {app, direct, ...props},
+    ref,
+) {
+    const {id, callback} = app as GlobalApp;
+    const node = useRef<HTMLDivElement>(null);
+    const combinedRef = useCombinedRefs<HTMLDivElement>(ref, node);
+    useEffect(() => !direct && callback(combinedRef.current), [callback, combinedRef, direct, id]);
+    const Cmp = callback;
+    return (
+        <>
+            <div ref={combinedRef} {...props} />
+            {direct && <Cmp node={node} {...props} />}
+        </>
+    );
 });

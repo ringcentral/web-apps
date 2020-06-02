@@ -97,18 +97,17 @@ export abstract class Sync implements SyncInit {
     }
 
     protected setState(state) {
+        if (this.getState() === state || this.lastState === state) return; // last state check is needed to prevent reaction on own post message
+        this.lastState = state;
         this.historyListenerObject.setState(state);
     }
 
     protected historyListener = () => {
         const state = this.getState();
         if (this.lastState === state) return;
+        this.lastState = state;
         this.sendPostMessage(eventType.state, state);
     };
 
-    protected updateStateOnPostMessage = newState => {
-        if (newState === this.getState() || newState === this.lastState) return;
-        this.lastState = newState;
-        this.setState(newState);
-    };
+    protected updateStateOnPostMessage = state => this.setState(state);
 }

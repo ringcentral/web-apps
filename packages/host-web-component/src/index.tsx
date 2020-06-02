@@ -1,6 +1,6 @@
 import {createMutationObserver} from '@ringcentral/web-apps-sync-web-component';
-import {createApp, App, ScriptApp} from '@ringcentral/web-apps-host';
-import {getAppCallback, makeEvent} from '@ringcentral/web-apps-common';
+import {createApp, App, ScriptApp, GlobalApp} from '@ringcentral/web-apps-host';
+import {makeEvent} from '@ringcentral/web-apps-common';
 
 export * from '@ringcentral/web-apps-common';
 
@@ -58,7 +58,7 @@ if (!customElements.get('web-app'))
                         node.setAttribute(attr.name, this.getAttribute(attr.name));
                     });
 
-                if (type === 'global') getAppCallback(id)(node);
+                if (type === 'global') (this.app as GlobalApp).callback(node);
             }
 
             protected async loadApp() {

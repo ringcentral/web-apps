@@ -23,7 +23,7 @@ export const MenuAppIframe = memo(({logout}) => {
 
     let render;
     if (!url) render = <>Loading menu config...</>;
-    else if (error) render = <>Error in menu: {error}</>;
+    else if (error) render = <>Error in menu: {error.toString()}</>;
     else if (loading) render = <>Loading menu app...</>;
 
     return (

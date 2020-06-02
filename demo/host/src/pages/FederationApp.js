@@ -2,19 +2,14 @@ import React, {memo, useEffect, useState} from 'react';
 import {appRegistry} from '../lib/registry';
 import {useApplication, useListenerEffect, eventType} from '@ringcentral/web-apps-host-react';
 
-const id = 'react';
+const id = 'federation';
 
-const delay = value => new Promise(res => setTimeout(() => res(value), 1000));
-
-export const MenuApp = memo(({logout}) => {
+export const FederationApp = memo(({logout}) => {
     const [url, setUrl] = useState(null);
 
     useEffect(() => {
         let mounted = true;
-        appRegistry[id]
-            .getUrl()
-            .then(url => delay(url)) // delay is just to show off ;)
-            .then(url => mounted && setUrl(url));
+        appRegistry[id].getUrl().then(url => mounted && setUrl(url));
         return () => (mounted = false);
     }, []);
 
@@ -22,14 +17,15 @@ export const MenuApp = memo(({logout}) => {
         id,
         type: appRegistry[id].type,
         url,
+        options: appRegistry[id].options,
     });
 
     useListenerEffect(node, eventType.message, e => e.detail.logout && logout());
 
     let render;
-    if (!url) render = <>Loading menu config...</>;
-    else if (error) render = <>Error in menu: {error.toString()}</>;
-    else if (loading) render = <>Loading menu app...</>;
+    if (!url) render = <>Loading federation app...</>;
+    else if (error) render = <>Error in federation: {error.toString()}</>;
+    else if (loading) render = <>Loading federation app...</>;
 
     return (
         <div className="navbar-container">
@@ -38,7 +34,7 @@ export const MenuApp = memo(({logout}) => {
                     <span className="navbar-text">{render}</span>
                 </nav>
             )}
-            <Component />
+            <Component foo="bar" />
         </div>
     );
 });

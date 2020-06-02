@@ -10,6 +10,7 @@ const cache = {};
 export interface AppInit {
     id: string;
     url: string | string[];
+    options?: {[key: string]: any};
 }
 
 export interface CreateAppInit extends AppInit {
@@ -59,11 +60,13 @@ const loadMixed = async (urls: string | string[]) => {
 export abstract class App {
     public id: string;
     public url: string | string[];
+    public options: {[key: string]: any};
     public loadedSource: any;
 
-    public constructor({id, url}: AppInit) {
+    public constructor({id, url, options = {}}: AppInit) {
         this.id = id;
         this.url = url;
+        this.options = options;
         this.loadedSource = this.load();
     }
 
@@ -89,17 +92,19 @@ export class ScriptApp extends JSApp {
 }
 
 export class GlobalApp extends JSApp {
+    public callback: (node: any) => any;
+
     public async ensureRegistered() {
-        return new Promise(res => {
+        return new Promise((res, rej) => {
             let attempts = 0;
             const checkRegistered = () => {
                 try {
-                    getAppCallback(this.id);
+                    this.callback = getAppCallback(this.id);
                     res();
                 } catch (e) {
                     attempts++;
                     if (attempts > maxAttempts)
-                        res(
+                        rej(
                             new Error(
                                 'App ' + this.id + ' has not called register function within reasonable timeframe',
                             ),
@@ -111,9 +116,30 @@ export class GlobalApp extends JSApp {
         });
     }
 
+    public async getFederatedCallback() {
+        const defaultScope = this.options.defaultScope || 'default';
+        const scope = this.options.scope || `web_app_${this.id}`;
+        const module = this.options.module || './index';
+        const exportName = this.options.exportName || 'default';
+
+        await super.load();
+        // Initializes the share scope. This fills it with known provided modules from this build and all remotes
+        // @ts-ignore
+        await __webpack_init_sharing__(defaultScope);
+        // @ts-ignore
+        await  window[scope].init(__webpack_share_scopes__[defaultScope]); //eslint-disable-line
+        // @ts-ignore
+        const factory = await window[scope].get(module);
+        this.callback = factory()[exportName];
+    }
+
     public async load() {
         await super.load();
-        await this.ensureRegistered();
+        if (this.options.federation) {
+            await this.getFederatedCallback();
+        } else {
+            await this.ensureRegistered();
+        }
     }
 }
 
@@ -121,19 +147,19 @@ export class IFrameApp extends App {
     public async load() {}
 }
 
-export const createApp = async ({id, url, type}: CreateAppInit) => {
+export const createApp = async ({id, url, type, options}: CreateAppInit) => {
     const key = makeKey({id, url, type});
 
     if (!cache.hasOwnProperty(key)) {
         switch (type) {
             case 'script':
-                cache[key] = new ScriptApp({id, url});
+                cache[key] = new ScriptApp({id, url, options});
                 break;
             case 'iframe':
-                cache[key] = new IFrameApp({id, url});
+                cache[key] = new IFrameApp({id, url, options});
                 break;
             case 'global':
-                cache[key] = new GlobalApp({id, url});
+                cache[key] = new GlobalApp({id, url, options});
                 break;
             default:
                 throw new Error('Unknown app type ' + type);
