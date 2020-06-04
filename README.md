@@ -32,7 +32,6 @@ By default one app at a time has to be rendered in main content area in order to
         - [React-based Web Component Apps](#react-based-web-component-apps)
     - [IFrame Apps](#iframe-apps)
         - [React-based IFrame Apps](#react-based-iframe-apps)
-        - [WAP Authentication](#wap-authentication)
     - [Global Apps](#global-apps)
         - [React-based Global Apps](#react-based-global-apps)
 - [Demo](#demo)
@@ -780,17 +779,6 @@ export default () => (
     </Router>
 );
 ```
-
-#### WAP Authentication
-
-- On Host:
-    1. Initiate regular 3-legged OAuth from Host by opening the URL: `wap.ringcentral.com/wap/authorize?client_id=%HOST_CLIENT_ID%`
-    2. On success CLW will redirect to a pre-defined 3-legged Redirect URI: `wap.ringcentral.com/oauth-callback?code=%CODE%&state=%STATE%`
-    3. Using the auth get the code via interop endpoint: `POST` to `wap.ringcentral.com/restapi/v1.0/interop/generate-code` with body `{clientId: %APP_CLIENT_ID%}`
-    4. Using the code from interop endpoint use launch endpoint to open the app in IFrame: `wap.ringcentral.com/apps/%APP_CLIENT_ID%/api/wap/launch?code=%CODE%&landing_page_uri=%APP_URL%`
-- In IFrame
-    1. Launch endpoint redirect IFrame to `%APP_URL%?endpoint_url=service.ringcentral.com/apps/%APP_CLIENT_ID%/api`
-    2. Use following URL to access API inside the IFrame: `wap.ringcentral.com/apps/%APP_CLIENT_ID%/api/restapi/v1.0/client-info`
 
 #### Origins in Apps
 

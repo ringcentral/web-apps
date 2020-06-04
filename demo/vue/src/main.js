@@ -43,8 +43,8 @@ customElements.define(
                     <router-view></router-view>
                     <hr/>
                     <ul>
-                      <li><router-link to="/application/apps/react/groups">React app deep (Groups)</router-link></li>
-                      <li><router-link to="/application/apps/react">React app</router-link></li>
+                      <li><router-link to="/application/apps/global/groups">React app deep (Groups)</router-link></li>
+                      <li><router-link to="/application/apps/global">React app</router-link></li>
                       <li><router-link to="/application/apps/iframe#/app/bar">Iframe app deep</router-link></li>
                     </ul>
                   </div>

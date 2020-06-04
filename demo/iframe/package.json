@@ -9,7 +9,6 @@
     "IE 11"
   ],
   "dependencies": {
-    "@ringcentral/sdk": "4.0.0-alpha.6",
     "@ringcentral/web-apps-sync-iframe": "*",
     "@ringcentral/web-apps-react": "*",
     "bootstrap": "4.4.1",

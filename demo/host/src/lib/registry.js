@@ -1,6 +1,4 @@
 // This could be any other provisioning method
-import {bootstrapApp} from './index';
-
 const fetchManifest = async url => (await fetch(`${url}/asset-manifest.json`)).json();
 
 // Special treatment of Create React App manifest
@@ -37,8 +35,7 @@ export const appRegistry = {
     iframe: {
         type: 'iframe',
         origin: `http://localhost:${process.env.REACT_APP_IFRAME_PORT}`,
-        getUrl: (url = `http://localhost:${process.env.REACT_APP_IFRAME_PORT}`) =>
-            bootstrapApp(url, process.env.REACT_APP_FRAME_CLIENT_ID), // add # to URL enable hash history in IFRAME
+        getUrl: (url = `http://localhost:${process.env.REACT_APP_IFRAME_PORT}`) => url, // add # to URL enable hash history in IFRAME
     },
     admin: {
         type: 'iframe',

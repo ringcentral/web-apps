@@ -4,7 +4,6 @@ import {Route, Switch, Redirect, Router} from 'react-router-dom';
 import {LocationSync} from '@ringcentral/web-apps-host-react';
 
 import LoggedInWrapper from './pages/LoggedInWrapper';
-import AuthLanding from './pages/AuthLanding';
 import NotFound from './pages/NotFound';
 
 // This allows to block history in sub-apps, this is not required in general
@@ -15,7 +14,6 @@ export default () => (
         <LocationSync />
         <Switch>
             <Route path="/application/apps" component={LoggedInWrapper} />
-            <Route path="/web/success" component={AuthLanding} />
             <Redirect from="/" to="/application/apps" />
             <Route component={NotFound} />
         </Switch>
