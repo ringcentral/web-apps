@@ -8,7 +8,7 @@ export default () => (
     <BrowserRouter>
         <Switch>
             <Route path="/app" component={App} />
-            <Redirect from="/" to="/app" />
+            <Redirect path="/" to="/app" />
             <Route component={NotFound} />
         </Switch>
     </BrowserRouter>

@@ -11,13 +11,15 @@
     "test": "echo Not implemented yet...",
     "test:quick": "echo Not implemented yet...",
     "test:coverage": "echo Not implemented yet...",
-    "build": "lerna run build --stream",
-    "start": "yarn build && yarn start:quick",
+    "build": "SKIP_PREFLIGHT_CHECK=true NODE_ENV=production dotenv lerna run build -- --stream",
+    "build:quick": "yarn build --scope=@ringcentral/*",
+    "start": "yarn build:quick && yarn start:quick",
     "start:quick": "dotenv lerna run start -- --parallel",
     "publish:release": "lerna publish --tag-version-prefix=\"\" --force-publish=* --no-push --no-git-tag-version",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint --fix",
     "lint:all": "yarn lint './*(demo|packages)/*/src/**/*.{jsx,js,tsx,ts}'",
-    "lint:staged": "lint-staged"
+    "lint:staged": "lint-staged",
+    "serve": "serve -l $PORT"
   },
   "author": "",
   "license": "ISC",
@@ -28,6 +30,7 @@
     "husky": "3.0.0",
     "lerna": "3.15.0",
     "lint-staged": "9.2.0",
+    "serve": "11.3.2",
     "typescript": "3.8.3"
   },
   "workspaces": {
@@ -45,5 +48,8 @@
       "**/enhanced-resolve",
       "**/enhanced-resolve/**"
     ]
+  },
+  "resolutions": {
+    "**/@babel/helper-compilation-targets": "7.10.2"
   }
 }

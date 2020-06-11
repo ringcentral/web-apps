@@ -16,6 +16,8 @@ export interface SyncInit {
         origin?: string;
     };
     id: string;
+    base?: string;
+    history?: historyType | any;
 }
 
 export abstract class Sync implements SyncInit {
@@ -24,9 +26,10 @@ export abstract class Sync implements SyncInit {
     public postMessage: SyncInit['postMessage'];
     public postMessageListener;
     public lastState = '';
+    public base = '';
     public historyListenerObject: HistoryListener;
 
-    public constructor({events, postMessage, history, id}: SyncInit & {history: historyType | any}) {
+    public constructor({events, postMessage, history, id, base}: SyncInit) {
         if (!id) throw new Error('No ID');
         if (!events) throw new Error('No events config');
         if (!postMessage) throw new Error('No postMessage config');
@@ -35,6 +38,7 @@ export abstract class Sync implements SyncInit {
         this.events = events;
         this.postMessage = postMessage;
         this.id = id;
+        if (base) this.base = base;
 
         this.events.types.forEach(type => this.events.target.addEventListener(type, this.postMessageFromEvent));
 
@@ -93,21 +97,23 @@ export abstract class Sync implements SyncInit {
     };
 
     protected getState() {
-        return this.historyListenerObject.getState();
+        return this.historyListenerObject.getState().replace(this.base, '');
     }
 
     protected setState(state) {
         if (this.getState() === state || this.lastState === state) return; // last state check is needed to prevent reaction on own post message
+        console.log('Setting state', this.base, state);
         this.lastState = state;
-        this.historyListenerObject.setState(state);
+        this.historyListenerObject.setState(this.base + state);
     }
 
     protected historyListener = () => {
         const state = this.getState();
         if (this.lastState === state) return;
         this.lastState = state;
-        this.sendPostMessage(eventType.state, state);
+        console.log('Listener', this.id, this.base, state);
+        this.sendPostMessage(eventType.state, state.replace(this.base, ''));
     };
 
-    protected updateStateOnPostMessage = state => this.setState(state);
+    protected updateStateOnPostMessage = state => this.setState(state || '/');
 }

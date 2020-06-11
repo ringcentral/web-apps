@@ -74,7 +74,7 @@ const App = ({match, location}) => {
             <nav className="top-menu">
                 <ul className="nav nav-tabs">
                     <li className="nav-item">
-                        <NavLink to={`${match.url}/`} className="nav-link" exact>
+                        <NavLink to={`${match.url}`} className="nav-link" exact>
                             Home
                         </NavLink>
                     </li>

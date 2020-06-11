@@ -135,13 +135,7 @@ export default props => {
     const routes = (
         <>
             <LocationSync />
-            <Switch>
-                <Route path="/application/apps/:appId" render={({match}) => <App {...props} match={match} />} />
-                <Route
-                    path="/application/apps/vue"
-                    render={() => <div>Whoooaaa, Vue app and React app on the same page!</div>}
-                />
-            </Switch>
+            <Route path="/application/apps/:appId" render={({match}) => <App {...props} match={match} />} />
         </>
     );
 

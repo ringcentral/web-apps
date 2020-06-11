@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "PORT=$REACT_APP_HOST_WC_PORT react-scripts start"
+    "start": "PORT=$REACT_APP_HOST_WC_PORT react-scripts start",
+    "build": "react-scripts build"
   },
   "browserslist": [
     "IE 11"

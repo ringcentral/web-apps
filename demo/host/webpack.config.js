@@ -5,14 +5,17 @@ const path = require('path');
 
 module.exports = {
     entry: './src/index',
-    mode: 'development',
+    mode: process.env.NODE_ENV || 'development',
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
         port: process.env.REACT_APP_HOST_PORT,
         historyApiFallback: true,
     },
     output: {
-        publicPath: `http://localhost:${process.env.REACT_APP_HOST_PORT}/`,
+        publicPath:
+            process.env.NODE_ENV === 'production'
+                ? '/demo/host/dist/'
+                : `http://localhost:${process.env.REACT_APP_HOST_PORT}/`,
     },
     module: {
         rules: [
@@ -38,8 +41,10 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: './public/index.html',
+            base: process.env.NODE_ENV === 'production' ? '/demo/host/dist/' : '/',
         }),
         new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             'process.env.REACT_APP_API_SERVER': JSON.stringify(process.env.REACT_APP_API_SERVER),
             'process.env.REACT_APP_HOST_CLIENT_ID': JSON.stringify(process.env.REACT_APP_HOST_CLIENT_ID),
             'process.env.REACT_APP_HOST_PORT': JSON.stringify(process.env.REACT_APP_HOST_PORT),

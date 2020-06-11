@@ -6,6 +6,7 @@ module.exports = {
                 jsonpFunction: 'webpackJsonpDemoReactMenu',
                 // @see https://github.com/facebook/create-react-app/issues/8381
                 hotUpdateFunction: 'webpackHotUpdateDemoReactMenu',
+                publicPath: process.env.NODE_ENV === 'production' ? '/demo/react-menu/dist/' : `/`,
             },
         },
     },

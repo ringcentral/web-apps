@@ -12,7 +12,7 @@ before_install: npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
 
 before_script:
 - DEBUG=eslint:cli-engine yarn lint:all
-- yarn build
+- yarn build:quick
 
 deploy:
 - provider: script

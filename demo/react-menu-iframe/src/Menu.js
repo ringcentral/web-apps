@@ -6,8 +6,9 @@ import {IFrameSync} from '@ringcentral/web-apps-sync-iframe';
 const sync = new IFrameSync({
     history: 'html5',
     id: 'reactMenuIframe',
-    origin: `http://localhost:${process.env.REACT_APP_HOST_PORT}`, // strict mode, remove if you don't know the host
+    origin: window.location.origin, // strict mode, remove if you don't know the host
 }); // must match host config
+
 const node = sync.getEventTarget();
 
 export default () => (

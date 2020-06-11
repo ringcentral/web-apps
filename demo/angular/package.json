@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port=$REACT_APP_ANGULAR_PORT",
-    "build": "ng build"
+    "build": "ng build --base-href /demo/angular/dist/"
   },
   "private": true,
   "dependencies": {

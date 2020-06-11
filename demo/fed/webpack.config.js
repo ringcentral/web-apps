@@ -3,13 +3,16 @@ const path = require('path');
 
 module.exports = {
     entry: './src/index',
-    mode: 'development',
+    mode: process.env.NODE_ENV || 'development',
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
         port: process.env.REACT_APP_FED_PORT,
     },
     output: {
-        publicPath: `http://localhost:${process.env.REACT_APP_FED_PORT}/`,
+        publicPath:
+            process.env.NODE_ENV === 'production'
+                ? '/demo/fed/dist/'
+                : `http://localhost:${process.env.REACT_APP_FED_PORT}/`,
     },
     module: {
         rules: [

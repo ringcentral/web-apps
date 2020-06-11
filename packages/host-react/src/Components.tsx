@@ -48,12 +48,14 @@ export const DivComponent: FC<DivComponentProps> = forwardRef<any, DivComponentP
     const {id, callback} = app as GlobalApp;
     const node = useRef<HTMLDivElement>(null);
     const combinedRef = useCombinedRefs<HTMLDivElement>(ref, node);
-    useEffect(() => !direct && callback(combinedRef.current), [callback, combinedRef, direct, id]);
-    const Cmp = callback;
+    // this is used for Global apps in JSONP mode
+    useEffect(() => (direct ? () => {} : callback(combinedRef.current)), [callback, combinedRef, direct, id]);
+    // this is used for Global apps in direct mode
+    const Cmp = direct && callback;
     return (
         <>
             <div ref={combinedRef} {...props} />
-            {direct && <Cmp node={node} {...props} />}
+            {Cmp && <Cmp node={node} {...props} />}
         </>
     );
 });

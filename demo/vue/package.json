@@ -3,7 +3,8 @@
   "version": "0.6.0",
   "private": true,
   "scripts": {
-    "start": "vue-cli-service serve --port $REACT_APP_VUE_PORT"
+    "start": "vue-cli-service serve --port $REACT_APP_VUE_PORT",
+    "build": "vue-cli-service build"
   },
   "browserslist": "IE 11",
   "dependencies": {

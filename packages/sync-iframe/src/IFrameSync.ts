@@ -4,14 +4,20 @@ import {Sync, historyType, SyncInit} from '@ringcentral/web-apps-sync';
 export {historyType};
 
 // eslint-disable-next-line @typescript-eslint/interface-name-prefix
-export interface IFrameSyncInit extends Pick<SyncInit['postMessage'], 'origin'> {
+export interface IFrameSyncInit extends Pick<SyncInit['postMessage'], 'origin'>, Pick<SyncInit, 'base'> {
     id?: string;
     history?: historyType;
     sendInitialLocation?: boolean;
 }
 
 export class IFrameSync extends Sync {
-    public constructor({id, history = null, sendInitialLocation = false, origin = undefined}: IFrameSyncInit = {}) {
+    public constructor({
+        id,
+        history = null,
+        sendInitialLocation = false,
+        origin = undefined,
+        base = '',
+    }: IFrameSyncInit = {}) {
         super({
             id,
             events: {
@@ -25,6 +31,7 @@ export class IFrameSync extends Sync {
                 origin,
             },
             history,
+            base,
         });
 
         if (sendInitialLocation) this.historyListener();

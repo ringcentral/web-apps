@@ -9,14 +9,14 @@ import {FederationDirectApp} from './FederationDirectApp';
 
 const logout = () => alert('Logout');
 
-const Layout = () => (
+const Layout = ({match}) => (
     <>
         <MenuApp logout={logout} />
         <MenuAppIframe logout={logout} />
 
         <Switch>
-            <Route path="/application/apps" component={Index} exact />
-            <Route path="/application/apps/:appId" component={App} />
+            <Route path={`${match.url}`} component={Index} exact />
+            <Route path={`${match.url}/:appId`} component={App} />
         </Switch>
 
         <FederationApp />

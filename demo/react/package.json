@@ -3,7 +3,8 @@
   "version": "0.6.0",
   "private": true,
   "scripts": {
-    "start": "PORT=$REACT_APP_REACT_PORT craco start"
+    "start": "PORT=$REACT_APP_REACT_PORT craco start",
+    "build": "craco build"
   },
   "browserslist": [
     "IE 11"
@@ -17,7 +18,6 @@
   },
   "devDependencies": {
     "@craco/craco": "5.6.3",
-    "cors": "2.8.5",
     "react-scripts": "3.0.1"
   }
 }

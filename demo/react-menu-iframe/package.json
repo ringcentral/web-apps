@@ -3,7 +3,8 @@
   "version": "0.6.0",
   "private": true,
   "scripts": {
-    "start": "PORT=$REACT_APP_REACT_MENU_IFRAME_PORT react-scripts start"
+    "start": "PORT=$REACT_APP_REACT_MENU_IFRAME_PORT react-scripts start",
+    "build": "PUBLIC_URL=/demo/react-menu-iframe/build/ react-scripts build"
   },
   "browserslist": [
     "IE 11"
