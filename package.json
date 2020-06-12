@@ -8,7 +8,7 @@
     "clean:packages": "lerna clean --yes",
     "clean:cache": "lerna exec -- rm -rf dist lib .cache false",
     "clean:self": "rm -rf node_modules",
-    "test": "echo Not implemented yet...",
+    "test": "PORT=3000 start-server-and-test serve http://localhost:3000 cypress:run",
     "test:quick": "echo Not implemented yet...",
     "test:coverage": "echo Not implemented yet...",
     "build": "SKIP_PREFLIGHT_CHECK=true NODE_ENV=production dotenv lerna run build -- --stream",
@@ -19,11 +19,15 @@
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint --fix",
     "lint:all": "yarn lint './*(demo|packages)/*/src/**/*.{jsx,js,tsx,ts}'",
     "lint:staged": "lint-staged",
-    "serve": "serve -l $PORT"
+    "serve": "serve -l $PORT",
+    "cypress": "cypress open",
+    "cypress:run": "cypress run"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "cypress": "4.8.0",
+    "cypress-iframe": "1.0.1",
     "dotenv-cli": "2.0.1",
     "eslint": "5.16.0",
     "eslint-config-ringcentral-typescript": "1.0.0",
@@ -31,6 +35,7 @@
     "lerna": "3.15.0",
     "lint-staged": "9.2.0",
     "serve": "11.3.2",
+    "start-server-and-test": "1.11.0",
     "typescript": "3.8.3"
   },
   "workspaces": {

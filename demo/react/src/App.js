@@ -25,7 +25,7 @@ const Messages = ({node}) => {
                     Send message
                 </button>
             </span>
-            <input type="text" className="form-control" value={JSON.stringify(messages)} readOnly />
+            <input type="text" className="form-control" name="messages" value={JSON.stringify(messages)} readOnly />
         </p>
     );
 };
@@ -125,7 +125,7 @@ const App = ({node, match: {url}, authtoken}) => {
                         authtoken&nbsp;<small>(this was provided by host)</small>
                     </span>
                 </span>
-                <input type="text" className="form-control" value={authtoken} readOnly />
+                <input type="text" className="form-control" name="authToken" value={authtoken} readOnly />
             </p>
         </>
     );

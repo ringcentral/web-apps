@@ -41,7 +41,8 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: './public/index.html',
-            base: process.env.NODE_ENV === 'production' ? '/demo/host/dist/' : '/',
+            // base: process.env.NODE_ENV === 'production' ? '/demo/host/dist/' : '/',
+            base: '/',
         }),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),

@@ -37,5 +37,5 @@ export const getAppCallback = (id): AppCallback => {
 
 export const dispatchEvent = (node: HTMLElement | any, event: eventType, data: any) => {
     if (!node) console.warn('Cannot dispatch event: node has not been mounted', event, data);
-    return node.dispatchEvent(makeEvent(event, data));
+    return node && node.dispatchEvent(makeEvent(event, data));
 };

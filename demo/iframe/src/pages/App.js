@@ -39,7 +39,7 @@ const Messages = ({node}) => {
                     Send message
                 </button>
             </span>
-            <input type="text" className="form-control" value={JSON.stringify(messages)} readOnly />
+            <input type="text" className="form-control" name="messages" value={JSON.stringify(messages)} readOnly />
         </p>
     );
 };

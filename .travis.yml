@@ -1,18 +1,29 @@
 language: node_js
 
+dist: xenial
+
+services:
+  - xvfb
+
+addons:
+  apt:
+    packages:
+      - libgconf-2-4
+
 cache:
   yarn: true
   directories:
-    - node_modules
-    - packages/*/node_modules
+    - ~/.cache/Cypress
 
 node_js: 13.9
 
-before_install: npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+before_install:
+  - npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+  - export DISPLAY=:99.0
 
 before_script:
 - DEBUG=eslint:cli-engine yarn lint:all
-- yarn build:quick
+- yarn build
 
 deploy:
 - provider: script
@@ -29,5 +40,3 @@ deploy:
     all_branches: true
     condition: $TRAVIS_TAG == *"-"*
     repo: ringcentral/web-apps
-
-after_success: yarn test:coverage

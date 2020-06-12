@@ -11,10 +11,6 @@
     {
       "source": "/demo/react-menu-iframe/build/**",
       "destination": "/demo/react-menu-iframe/build/index.html"
-    },
-    {
-      "source": "/app/**",
-      "destination": "/demo/react-menu-iframe/build/index.html"
     }
   ],
   "redirects": [
