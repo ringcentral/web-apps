@@ -40,3 +40,8 @@ deploy:
     all_branches: true
     condition: $TRAVIS_TAG == *"-"*
     repo: ringcentral/web-apps
+
+after_success:
+  - mkdir .vercel
+  - echo $VERCEL_PROJECT > .vercel/project.json
+  - if [[ ${TRAVIS_BRANCH} == "master" ]]; then yarn vercel --prod --token=$VERCEL_TOKEN --no-clipboard; fi

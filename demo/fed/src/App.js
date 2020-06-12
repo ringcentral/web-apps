@@ -1,16 +1,21 @@
 import React from 'react';
 import moment from 'moment';
 
-export default ({foo}) => (
+export default ({mode}) => (
     <div
+        className="border border-info"
         style={{
             borderRadius: '4px',
-            padding: '2em',
-            backgroundColor: 'red',
-            color: 'white',
+            padding: '1em',
+            display: 'flex',
+            alignItems: 'center',
         }}
     >
-        <h2>App 2 Widget: {foo}</h2>
-        <p>{moment().format('MMMM Do YYYY, h:mm:ss a')}</p>
+        <h4 className="font-weight-lighter" style={{margin: '0 10px 0 0'}}>
+            Global App (Federated)
+        </h4>
+        <div>
+            Mode: <code>{mode}</code>, {moment().format('MMMM Do YYYY, h:mm:ss a')}
+        </div>
     </div>
 );

@@ -1,5 +1,5 @@
 {
-  "name": "@web-apps/fed",
+  "name": "@web-apps/demo-fed",
   "version": "0.0.0",
   "private": true,
   "devDependencies": {

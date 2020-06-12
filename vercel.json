@@ -1,0 +1,28 @@
+{
+  "name": "ringcentral-web-apps",
+  "scope": "kirill.konshin@gmail.com",
+  "rewrites": [
+    {
+      "source": "/application/(.*)",
+      "destination": "/demo/host/dist/index.html"
+    },
+    {
+      "source": "/demo/iframe/build/(.*)",
+      "destination": "/demo/iframe/build/index.html"
+    },
+    {
+      "source": "/demo/react-menu-iframe/build/(.*)",
+      "destination": "/demo/react-menu-iframe/build/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/demo/admin/",
+      "destination": "/demo/admin/index.html"
+    },
+    {
+      "source": "/",
+      "destination": "/application/apps"
+    }
+  ]
+}

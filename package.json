@@ -21,7 +21,8 @@
     "lint:staged": "lint-staged",
     "serve": "serve -l $PORT",
     "cypress": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "vercel": "vercel"
   },
   "author": "",
   "license": "ISC",
@@ -36,7 +37,8 @@
     "lint-staged": "9.2.0",
     "serve": "11.3.2",
     "start-server-and-test": "1.11.0",
-    "typescript": "3.8.3"
+    "typescript": "3.8.3",
+    "vercel": "19.1.0"
   },
   "workspaces": {
     "packages": [

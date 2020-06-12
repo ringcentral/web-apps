@@ -34,7 +34,7 @@ export const FederationDirectApp = memo(({logout}) => {
                     <span className="navbar-text">{render}</span>
                 </nav>
             )}
-            <Component direct foo="bar" />
+            <Component direct mode="Direct" />
         </div>
     );
 });

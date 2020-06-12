@@ -34,7 +34,7 @@ export const FederationApp = memo(({logout}) => {
                     <span className="navbar-text">{render}</span>
                 </nav>
             )}
-            <Component foo="bar" />
+            <Component mode="JSONP" />
         </div>
     );
 });
