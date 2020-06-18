@@ -1,52 +1,51 @@
-Web Apps
-========
+# Web Apps
 
 This framework provides support for embeddable apps infrastructure aka Microfrontends. Host application can delegate the actual features to other apps and provide seamless navigation and UX between those apps. Applications can be implemented using any JS framework and can be deployed anywhere, can have own release cycle. Host can be a React application or any other JS framework thanks to Web Components support.
 
 Common pitfall of all Microfrontends is inability to efficiently and seamlessly share dependencies between host and apps. Web Apps framework is written with built-in support of [Webpack Module Federation](https://webpack.js.org/concepts/module-federation), so apps can declare and share dependencies in a standard way.
 
-- Location synchronization between app and host
-- Ability to deep-link "app to app" or "app to host" or "host to app"
-- Consistent event-based interaction between apps and host
-- IFrame resize based on content of IFrame
-- IFrame popup support
-- Maximum adherence to Web Standards
-- 3-legged auth support
-- Written in TypeScript
-- React and Web Component host helpers
-- Unlimited nesting of apps within other apps, e.g. each app can become a host for more apps
+-   Location synchronization between app and host
+-   Ability to deep-link "app to app" or "app to host" or "host to app"
+-   Consistent event-based interaction between apps and host
+-   IFrame resize based on content of IFrame
+-   IFrame popup support
+-   Maximum adherence to Web Standards
+-   3-legged auth support
+-   Written in TypeScript
+-   React and Web Component host helpers
+-   Unlimited nesting of apps within other apps, e.g. each app can become a host for more apps
 
 Quick remark. This framework is most useful when you have a system where apps can be written using different frameworks and you need a layer to orchestrate it. There's no need for this framework if you only deal with React host and React apps, Module Federation will work just fine for you. However, if you have to show `iframe`-based apps, or, say, Vue or Angular app inside React app, the Web Apps framework is a way to go.
 
 ## TOC
 
-- [App Typs](#app-types)
-- [How It Works](#how-it-works)
-- [Host](#host)
-    - [React Host](#react-host)
-        - [HTML5 location sync and multiple instances of History object](#html5-location-sync-and-multiple-instances-of-history-object)
-        - [React Dev Tools](#react-dev-tools)
-    - [Hosts without React](#hosts-without-react)
-    - [Host-IFrame sync tracking modes](#host-iframe-sync-tracking-modes)
-    - [Authentication](#authentication)
-    - [App Registry (optional)](#apps-registry-optional)
-- [Apps](#apps)
-    - [Web Component Apps](#web-component-apps)
-        - [React-based Web Component Apps](#react-based-web-component-apps)
-    - [Global Apps](#global-apps)
-        - [Webpack Module Federation Apps](#webpack-module-federation-apps)
-        - [React-based Webpack Module Federation Apps](#react-based-webpack-module-federation-apps)
-        - [Global Apps JSONP](#global-apps)
-        - [React-based Global Apps JSONP](#react-based-global-apps)
-        - [Global Apps in Direct mode](#global-apps-in-direct-mode)
-    - [IFrame Apps](#iframe-apps)
-        - [React-based IFrame Apps](#react-based-iframe-apps)
-- [Demo](#demo)
-- [Upgrading](#upgrading)
+-   [App Typs](#app-types)
+-   [How It Works](#how-it-works)
+-   [Host](#host)
+    -   [React Host](#react-host)
+        -   [HTML5 location sync and multiple instances of History object](#html5-location-sync-and-multiple-instances-of-history-object)
+        -   [React Dev Tools](#react-dev-tools)
+    -   [Hosts without React](#hosts-without-react)
+    -   [Host-IFrame sync tracking modes](#host-iframe-sync-tracking-modes)
+    -   [Authentication](#authentication)
+    -   [App Registry (optional)](#apps-registry-optional)
+-   [Apps](#apps)
+    -   [Web Component Apps](#web-component-apps)
+        -   [React-based Web Component Apps](#react-based-web-component-apps)
+    -   [Global Apps](#global-apps)
+        -   [Webpack Module Federation Apps](#webpack-module-federation-apps)
+        -   [React-based Webpack Module Federation Apps](#react-based-webpack-module-federation-apps)
+        -   [Global Apps JSONP](#global-apps)
+        -   [React-based Global Apps JSONP](#react-based-global-apps)
+        -   [Global Apps in Direct mode](#global-apps-in-direct-mode)
+    -   [IFrame Apps](#iframe-apps)
+        -   [React-based IFrame Apps](#react-based-iframe-apps)
+-   [Demo](#demo)
+-   [Upgrading](#upgrading)
 
 ## App Types
 
-There are 3 kind of embeddable applications: IFrame and Web Component based.
+There are 3 kind of embeddable applications: IFrame, Web Component and Global based.
 
 An IFrame application (type `iframe`) is rendered inside the `iframe` and can synchronize it's URL and size with the main application.
 
@@ -60,14 +59,14 @@ Library loads scripts and styles for the App, manages the lifecycle of Custom El
 
 You can use the following table when choosing which app type better suits for your case:
 
-|  | IFrame | Web Components | Global |
-|-|-|-|-|
-| Type in config | `iframe` | `script` | `global` |
-| Isolation | Full: CSS, scripts | :warning: Partial: CSS when not polyfilled | :warning: No isolation |
-| Hot Module Replacement | Full support | :warning: Requires custom tailoring | :warning: Requires custom tailoring |
-| Popups | :warning: Limited to size of `iframe`, popup body must scroll | No limitations | No limitations |
-| Navigation | No limitations, `iframe` path will be synced as hosts's `hash` | No limitations | No limitations |
-| 3rd Party | Only choice | :warning: Forbidden to use for 3rd Parties | :warning: Forbidden to use for 3rd Parties |
+|                        | IFrame                                                         | Web Components                             | Global                                     |
+| ---------------------- | -------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------ |
+| Type in config         | `iframe`                                                       | `script`                                   | `global`                                   |
+| Isolation              | Full: CSS, scripts                                             | :warning: Partial: CSS when not polyfilled | :warning: No isolation                     |
+| Hot Module Replacement | Full support                                                   | :warning: Requires custom tailoring        | :warning: Requires custom tailoring        |
+| Popups                 | :warning: Limited to size of `iframe`, popup body must scroll  | No limitations                             | No limitations                             |
+| Navigation             | No limitations, `iframe` path will be synced as hosts's `hash` | No limitations                             | No limitations                             |
+| 3rd Party              | Only choice                                                    | :warning: Forbidden to use for 3rd Parties | :warning: Forbidden to use for 3rd Parties |
 
 Framework provides ability to load apps developed by 3rd parties, which has to be used with caution. Best isolation is provided by `iframe` mode.
 
@@ -89,11 +88,11 @@ Host App <-> Div Element <-> Global App
 
 Events are instances of `CustomEvent` class and have `detail` property that carries the event value. Type of value depends on type of event.
 
-- `message` — anything
-- `popup` — special event that carries requested backdrop color as value
-- `authError` — special event to notify Host that App has authentication error, host should display login page in this case
-- `location` — special event that tells Host to open certain location, *handled automatically, no need to capture*
-- `state` — special event to sync location between Host and IFrame, *handled automatically, no need to capture*
+-   `message` — anything
+-   `popup` — special event that carries requested backdrop color as value
+-   `authError` — special event to notify Host that App has authentication error, host should display login page in this case
+-   `location` — special event that tells Host to open certain location, _handled automatically, no need to capture_
+-   `state` — special event to sync location between Host and IFrame, _handled automatically, no need to capture_
 
 ### IFrame retransmission flow from `iframe` to host
 
@@ -111,9 +110,9 @@ npm install @webcomponents/webcomponentsjs @babel/polyfill --save-dev
 ```
 
 ```js
-import "@babel/polyfill";
-import "@webcomponents/webcomponentsjs/custom-elements-es5-adapter";
-import "@webcomponents/webcomponentsjs";
+import '@babel/polyfill';
+import '@webcomponents/webcomponentsjs/custom-elements-es5-adapter';
+import '@webcomponents/webcomponentsjs';
 ```
 
 We have to use either https://github.com/github/babel-plugin-transform-custom-element-classes on app-level or  
@@ -173,46 +172,50 @@ import {useApplication, eventType, useListenerEffect, dispatchEvent} from '@ring
 const Page = () => {
     const {error, Component, node, loading} = useApplication({
         id: 'xxx', // should be unique for each app
-        
+
         type: 'script', // or global or iframe
-        
+
         url: 'http://example.com/script.js', // one URL that will load all
-        
+
         // or multiple URLs as an array, order matter
-        //url: [ 
+        //url: [
         //    'http://example.com/styles.css',
         //    'http://example.com/bundle.js',
         //    'http://example.com/entry.js'
-        //]        
+        //]
     });
-    
+
     // Messages
     const [messages, setMessages] = useState([]);
-    const onMessage = event => setMessages(messages => [...messages, event.detail]);
+    const onMessage = (event) => setMessages((messages) => [...messages, event.detail]);
     useListenerEffect(node, eventType.message, onMessage);
-    
+
     // Popups
     const [popup, setPopup] = useState(false);
-    const onPopup = event => setPopup(popup => (popup !== event.detail ? event.detail : popup));
+    const onPopup = (event) => setPopup((popup) => (popup !== event.detail ? event.detail : popup));
     useListenerEffect(node, eventType.popup, onPopup);
 
     if (error) return <div>App cannot be rendered: {error.toString()}</div>;
-    
-    return <div className={popup && 'app-popup'}>
-        <div
-            className="app-popup-bg"
-            onClick={e => dispatchEvent(node, eventType.popup, false)}
-            style={{backgroundColor: popup}}
-            role="presentation"
-        />
 
-        {loading && <div>App is mounting</div>}
-        {/* Component must be placed unconditionally, do not do !loading && Component */}
-        <Component/>
+    return (
+        <div className={popup && 'app-popup'}>
+            <div
+                className="app-popup-bg"
+                onClick={(e) => dispatchEvent(node, eventType.popup, false)}
+                style={{backgroundColor: popup}}
+                role="presentation"
+            />
 
-        <div>{JSON.stringify(messages)}</div>
-        <div><button onClick={e => dispatchEvent(node, eventType.message, {foo: 'bar'})}>Send Message</button></div>
-    </>;
+            {loading && <div>App is mounting</div>}
+            {/* Component must be placed unconditionally, do not do !loading && Component */}
+            <Component />
+
+            <div>{JSON.stringify(messages)}</div>
+            <div>
+                <button onClick={(e) => dispatchEvent(node, eventType.message, {foo: 'bar'})}>Send Message</button>
+            </div>
+        </>
+    );
 };
 ```
 
@@ -221,8 +224,8 @@ When `Component` is rendered a DOM `node` (either a Web Component's `HTMLElement
 This DOM `node` is used for communication with the App:
 
 ```js
-useListenerEffect(node, eventType.message, event => console.log(event.detail));
-dispatchEvent(node, eventType.message, {foo: 'bar'})
+useListenerEffect(node, eventType.message, (event) => console.log(event.detail));
+dispatchEvent(node, eventType.message, {foo: 'bar'});
 ```
 
 #### Render prop
@@ -231,11 +234,13 @@ dispatchEvent(node, eventType.message, {foo: 'bar'})
 import {Application} from '@ringcentral/web-apps-host-react';
 
 const Page = () => (
-    <Application id="id" url="http://example.com/script.js" type="script">{
-        ({error, loading, Component, node}) => {/* same stuff from hooks example */}}
+    <Application id="id" url="http://example.com/script.js" type="script">
+        {({error, loading, Component, node}) => {
+            /* same stuff from hooks example */
+        }}
     </Application>
 );
-``` 
+```
 
 #### HOC
 
@@ -244,25 +249,23 @@ import {withApplication} from '@ringcentral/web-apps-host-react';
 
 // you can pre-bind the app config
 const OneAppComponent = withApplication({id: 'id', url: 'http://example.com/script.js', type: 'script'})(
-    ({error, loading, Component, node}) => (
+    ({error, loading, Component, node}) =>
         /* same stuff from hooks example */
         Component
-    )
 );
 
-// then you can place it anywhere 
+// then you can place it anywhere
 const Page1 = () => <OneAppComponent />;
 
 // or app config should be provided as props
 const MultipleAppComponent = withApplication()(
-    ({error, loading, Component, node}) => (
+    ({error, loading, Component, node}) =>
         /* same stuff from hooks example */
         Component
-    )
 );
 
 // and then
-const Page2 = () => <MultipleAppComponent id="id" url="http://example.com/script.js" type="script" />; 
+const Page2 = () => <MultipleAppComponent id="id" url="http://example.com/script.js" type="script" />;
 ```
 
 #### HTML5 location sync and multiple instances of History object
@@ -298,21 +301,13 @@ import {Router} from 'react-router-dom';
 // This allows to block history in sub-apps, this is not required in general
 window.RCAppsDemoHistory = createBrowserHistory();
 
-export default () => (
-    <Router history={window.RCAppsDemoHistory}>
-        {/* normal route config as usual */}
-    </Router>
-);
+export default () => <Router history={window.RCAppsDemoHistory}>{/* normal route config as usual */}</Router>;
 ```
 
 And then in React-based Apps routers as well:
 
 ```js
-export default () => (
-    <Router history={window.RCAppsDemoHistory}>
-        {/* normal route config as usual */}
-    </Router>
-);
+export default () => <Router history={window.RCAppsDemoHistory}>{/* normal route config as usual */}</Router>;
 ```
 
 Then `Prompt` will work as usual:
@@ -323,7 +318,7 @@ import {Prompt} from 'react-router-dom';
 
 export default () => (
     <div>
-        <Prompt when={true} message={location => `Are you sure you want to go to ${location.pathname}`} />
+        <Prompt when={true} message={(location) => `Are you sure you want to go to ${location.pathname}`} />
         Whatever
     </div>
 );
@@ -361,15 +356,11 @@ Use `expose-loader` for webpack inside your host application as an elegant way t
 const exposedReactDependencies = [
     {
         test: require.resolve('react'),
-        use: [
-            {loader: 'expose-loader', options: 'React'},
-        ],
+        use: [{loader: 'expose-loader', options: 'React'}],
     },
     {
         test: require.resolve('react-dom'),
-        use: [
-            {loader: 'expose-loader', options: 'ReactDOM'},
-        ],
+        use: [{loader: 'expose-loader', options: 'ReactDOM'}],
     },
 ];
 
@@ -384,7 +375,7 @@ config.externals = {
     react: 'React',
     'react-dom': 'ReactDOM',
 };
-````
+```
 
 ### Hosts without React
 
@@ -399,10 +390,10 @@ import '@ringcentral/web-apps-host-web-component';
 And then anywhere in the page:
 
 ```html
-<web-app id='react' url='["http://example.com"]' type="iframe" style="..." history="html5" className="..."/>
+<web-app id="react" url='["http://example.com"]' type="iframe" style="..." history="html5" className="..." />
 ```
 
-You may implement remote/local registry of apps the same way as in React demo. 
+You may implement remote/local registry of apps the same way as in React demo.
 
 In order to listen to events on the app you need to do following:
 
@@ -412,7 +403,7 @@ import {eventType} from '@ringcentral/web-apps-common';
 const app = document.querySelector('web-app');
 
 app.addEventListener('load', () => {
-    const onMessage = event => console.log('React App got event', event.detail);
+    const onMessage = (event) => console.log('React App got event', event.detail);
     const node = app.getEventTarget();
     node.addEventListener(eventType.message, onMessage);
 });
@@ -424,19 +415,20 @@ Keep in mind that `web-app` supports dynamic app switching, which means if `id` 
 
 SDK supports multiple sync tracking modes:
 
-- `hash` (default) — IFrame location will be placed in hash of host (for example IFrame has location `/foo/bar` then host will have it as `whatever#/foo/bar`), this mode is needed if you don't quite trust the contents of IFrame and to support completely different routing schemas in IFrame and App
-- `full` — IFrame and App will always have same location, useful to display a menu if an IFrame
-- `disabled` — No sync
-- `slave` — same as full, but IFrame will only follows location changes from Host
+-   `hash` (default) — IFrame location will be placed in hash of host (for example IFrame has location `/foo/bar` then host will have it as `whatever#/foo/bar`), this mode is needed if you don't quite trust the contents of IFrame and to support completely different routing schemas in IFrame and App
+-   `full` — IFrame and App will always have same location, useful to display a menu if an IFrame
+-   `disabled` — No sync
+-   `slave` — same as full, but IFrame will only follows location changes from Host
 
 You can set mode via attribute on `Component` like so:
 
-- For React host:
+-   For React host:
+
     ```html
     <Component tracking="full" />
     ```
 
-- For non-React host:
+-   For non-React host:
     ```html
     <rc-app tracking="full" />
     ```
@@ -445,14 +437,15 @@ You can set mode via attribute on `Component` like so:
 
 The simplest way to provide authentication information to Web Component or Global app is to set it as an attribute on the `Component`:
 
-- For React host:
+-   For React host:
+
     ```html
-    <Component authtoken={authtoken} />
+    <Component authtoken="{authtoken}" />
     ```
 
-- For non-React host:
+-   For non-React host:
     ```html
-    <rc-app authtoken={authtoken} />
+    <rc-app authtoken="{authtoken}" />
     ```
 
 See the host demos for more info.
@@ -467,16 +460,16 @@ Applications configs (types & URLS) can be loaded from API or stored locally. Th
 export const appsRegistry = {
     react: {
         type: 'global',
-        getUrl: async overrideUrl => (overrideUrl || 'http://localhost:4001') + '/global.js'
+        getUrl: async (overrideUrl) => (overrideUrl || 'http://localhost:4001') + '/global.js',
     },
     vue: {
         type: 'script',
-        getUrl: async overrideUrl => (overrideUrl || 'http://localhost:4002') + 'index.js'
+        getUrl: async (overrideUrl) => (overrideUrl || 'http://localhost:4002') + 'index.js',
     },
     iframe: {
         type: 'iframe',
-        getUrl: overrideUrl => (overrideUrl || 'http://localhost:4003') + '/index.html?authToken=hardcoded'
-    }
+        getUrl: (overrideUrl) => (overrideUrl || 'http://localhost:4003') + '/index.html?authToken=hardcoded',
+    },
 };
 ```
 
@@ -487,7 +480,7 @@ To do so simply open your browser's console and set:
 
 ```js
 localStorage.appsOverrides = {
-    desiredAppId: {url: 'http://localhost:5000'}
+    desiredAppId: {url: 'http://localhost:5000'},
 };
 ```
 
@@ -526,11 +519,11 @@ Keep in mind that one app may appear in many Hosts (production, staging) so this
 From host standpoint app injection is as follows:
 
 ```js
-    const {error, Component, node, loading} = useApplication({
-        id: 'xxx',
-        type: 'script',
-        url: 'http://example.com/script.js'
-    });
+const {error, Component, node, loading} = useApplication({
+    id: 'xxx',
+    type: 'script',
+    url: 'http://example.com/script.js',
+});
 ```
 
 Web Compoent's DOM node can be used to listen to Host events inside the React app, to do that we need to provide a node
@@ -547,19 +540,23 @@ template.innerHTML = `
     </style>
 `;
 
-customElements.define('web-app-react', class extends HTMLElement { // on the host ID will be react
-    constructor() {
-        super();
-        this.attachShadow({mode: 'open'});
-        this.shadowRoot.appendChild(document.importNode(template.content, true));
+customElements.define(
+    'web-app-react',
+    class extends HTMLElement {
+        // on the host ID will be react
+        constructor() {
+            super();
+            this.attachShadow({mode: 'open'});
+            this.shadowRoot.appendChild(document.importNode(template.content, true));
+        }
     }
-});
-``` 
+);
+```
 
 #### Events
 
 ```js
-import {dispatchEvent, eventType} from "@ringcentral-web-apps/common";
+import {dispatchEvent, eventType} from '@ringcentral-web-apps/common';
 
 const template = document.createElement('template');
 
@@ -568,56 +565,62 @@ template.innerHTML = `
     <button>Send Message</button>
 `;
 
-customElements.define('web-app-react', class extends HTMLElement { // on the host ID will be react
-    div = null;
-    button = null;
-    messages = [];
-    constructor() {
-        super();
-        this.attachShadow({mode: 'open'});
-        this.shadowRoot.appendChild(document.importNode(template.content, true));
+customElements.define(
+    'web-app-react',
+    class extends HTMLElement {
+        // on the host ID will be react
+        div = null;
+        button = null;
+        messages = [];
+        constructor() {
+            super();
+            this.attachShadow({mode: 'open'});
+            this.shadowRoot.appendChild(document.importNode(template.content, true));
 
-        // get instances of elements in template
-        this.div = this.shadowRoot.querySelector('div');
-        this.button = this.shadowRoot.querySelector('button');
+            // get instances of elements in template
+            this.div = this.shadowRoot.querySelector('div');
+            this.button = this.shadowRoot.querySelector('button');
+        }
+        connectedCallback() {
+            // send message on button click
+            this.button.addEventListener((e) => dispatchEvent(this, eventType.message, {foo: 'bar'}));
+
+            // capture message events emitted locally and from host
+            this.addEventListener(eventType.message, (event) => {
+                this.messages.push(event.detail);
+                this.div.innerText = JSON.stringify(this.messages);
+            });
+        }
     }
-    connectedCallback(){
-        
-        // send message on button click
-        this.button.addEventListener(e => dispatchEvent(this, eventType.message, {foo: 'bar'}));
-    
-        // capture message events emitted locally and from host
-        this.addEventListener(eventType.message, event => {
-            this.messages.push(event.detail);
-            this.div.innerText = JSON.stringify(this.messages);        
-        });
-    }
-});
-``` 
+);
+```
 
 #### Shadow CSS & Polyfills
 
 Web Components can be shipped with Shadow CSS as in example above, which will not be visible outside of Shadow DOM. All host styles are ignored. Make sure your bundler places styles correctly.
 
-:warning: **Keep in mind that if you target IE browsers then a polyfill will be used which cannot isolate CSS properly, so host styles will be affecting polyfilled Shadow DOM.** 
+:warning: **Keep in mind that if you target IE browsers then a polyfill will be used which cannot isolate CSS properly, so host styles will be affecting polyfilled Shadow DOM.**
 
 You may also mount directly into Custom Element, without Shadow DOM, in this case styles & DOM will be consistent in modern and polyfilled browsers:
 
-
 ```js
-customElements.define('web-app-react', class extends HTMLElement { // on the host ID will be react
-    div = null;
-    button = null;
-    messages = [];
-    constructor() {
-        super();
+customElements.define(
+    'web-app-react',
+    class extends HTMLElement {
+        // on the host ID will be react
+        div = null;
+        button = null;
+        messages = [];
+        constructor() {
+            super();
+        }
+        connectedCallback() {
+            this.div = document.createElement('div');
+            this.appendChild(this.div);
+            // and so on
+        }
     }
-    connectedCallback(){
-        this.div = document.createElement('div');
-        this.appendChild(this.div);
-        // and so on
-    }
-});
+);
 ```
 
 #### React-based Web Component Apps
@@ -626,8 +629,8 @@ React apps inside Web Components must have `react-shadow-dom-retarget-events` im
 
 ```js
 // index.js
-import React from "react";
-import {render, unmountComponentAtNode} from "react-dom";
+import React from 'react';
+import {render, unmountComponentAtNode} from 'react-dom';
 import retargetEvents from 'react-shadow-dom-retarget-events';
 import {App} from './app';
 
@@ -640,68 +643,69 @@ template.innerHTML = `
     <div class="container"></div>
 `;
 
-customElements.define('web-app-react', class extends HTMLElement {
-    
-    mount = null;
+customElements.define(
+    'web-app-react',
+    class extends HTMLElement {
+        mount = null;
 
-    constructor() {
-        super();
-        this.attachShadow({mode: 'open'});
-        this.shadowRoot.appendChild(document.importNode(template.content, true));
-        this.mount = this.shadowRoot.querySelector('.container');
-        retargetEvents(this.mount);
-    }
+        constructor() {
+            super();
+            this.attachShadow({mode: 'open'});
+            this.shadowRoot.appendChild(document.importNode(template.content, true));
+            this.mount = this.shadowRoot.querySelector('.container');
+            retargetEvents(this.mount);
+        }
 
-    static get observedAttributes() {
-        return ['authtoken'];
-    }
+        static get observedAttributes() {
+            return ['authtoken'];
+        }
 
-    render() {
-        // as you see we re-render every time when authtoken changes
-        render(<App authtoken={this.getAttribute('authtoken')} node={this}/>, this.mount);
-    }
+        render() {
+            // as you see we re-render every time when authtoken changes
+            render(<App authtoken={this.getAttribute('authtoken')} node={this} />, this.mount);
+        }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        this.render();
-    }
+        attributeChangedCallback(name, oldValue, newValue) {
+            this.render();
+        }
 
-    connectedCallback() {
-        this.render();
-    }
+        connectedCallback() {
+            this.render();
+        }
 
-    disconnectedCallback() {
-        unmountComponentAtNode(this);    
+        disconnectedCallback() {
+            unmountComponentAtNode(this);
+        }
     }
-    
-});
-``` 
+);
+```
 
 And then inside the actual React application we wire events the same way as in the [example above](#events), but for React-base apps we provide an SDK to make things easier:
 
 ```js
 // App.js
-import React from "react";
-import {dispatchEvent, useListenerEffect, eventType} from "@ringcentral/web-apps-react";
+import React from 'react';
+import {dispatchEvent, useListenerEffect, eventType} from '@ringcentral/web-apps-react';
 
 // node and authtoken props are provided by Custom Component wrapper and will be automatically updated if host will change
 export default ({node, authtoken}) => {
-
     // set up local state
     const [messages, setMessages] = useState([]);
 
     // set up event listener for local & host events
-    useListenerEffect(node, eventType.message, event => setMessages(messages => [...messages, event.detail]));
+    useListenerEffect(node, eventType.message, (event) => setMessages((messages) => [...messages, event.detail]));
 
     // set up event dispatcher
     const sendMessage = () => dispatchEvent(node, eventType.message, {toHost: 'message to host'});
 
-    return (<>
-        <div>{authtoken}</div>
-        <div>{JSON.stringify(messages)}</div>
-        <button onClick={sendMessage}>Send message</button>
-    </>);
-
-}
+    return (
+        <>
+            <div>{authtoken}</div>
+            <div>{JSON.stringify(messages)}</div>
+            <button onClick={sendMessage}>Send message</button>
+        </>
+    );
+};
 ```
 
 As you see the code is identical to the React-based Host code.
@@ -717,18 +721,18 @@ If you don't need the isolation of the Web Components and you are OK to interfer
 From host standpoint app injection is as follows:
 
 ```js
-    const {error, Component, node, loading} = useApplication({
-        id: 'appId',
-        type: 'global',
-        url: 'http://example.com/script.js',
-        options: {
-            federation: true,
-            defaultScope: 'default', // scope to store shared modules, optional
-            scope: 'web_app_appId', // scope for app modules, optional
-            module: './index', // whis file to import modules from, optional
-            exportName: 'default', // which export will be taken
-        }
-    });
+const {error, Component, node, loading} = useApplication({
+    id: 'appId',
+    type: 'global',
+    url: 'http://example.com/script.js',
+    options: {
+        federation: true,
+        defaultScope: 'default', // scope to store shared modules, optional
+        scope: 'web_app_appId', // scope for app modules, optional
+        module: './index', // whis file to import modules from, optional
+        exportName: 'default', // which export will be taken
+    },
+});
 ```
 
 If messing with Web Components is too much, you can use a simpler way, but it would have less isolation due to complete lack of Shadow DOM and Shadow CSS.
@@ -792,15 +796,16 @@ import ReactDOM from 'react-dom';
 
 const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
-export default (node) => { // ID on host must match: global
+export default (node) => {
+    // ID on host must match: global
 
-    const onChange = () => render(<App authtoken={node.getAttribute('authtoken')} node={node}/>, node);
+    const onChange = () => render(<App authtoken={node.getAttribute('authtoken')} node={node} />, node);
 
-    const observer = new MutationObserver(mutations =>
+    const observer = new MutationObserver((mutations) =>
         mutations.forEach(
             // re-render on changes
-            mutation => mutation.type === 'attributes' && onChange(), // you may also accumulate this instead of calling every time
-        ),
+            (mutation) => mutation.type === 'attributes' && onChange() // you may also accumulate this instead of calling every time
+        )
     );
 
     node.addEventListener('remove', () => {
@@ -815,7 +820,6 @@ export default (node) => { // ID on host must match: global
 
     // unmount handler
     return () => ReactDOM.unmountComponentAtNode(node);
-
 };
 ```
 
@@ -824,19 +828,20 @@ export default (node) => { // ID on host must match: global
 From host standpoint app injection is as follows:
 
 ```js
-    const {error, Component, node, loading} = useApplication({
-        id: 'xxx',
-        type: 'global',
-        url: 'http://example.com/script.js'
-    });
+const {error, Component, node, loading} = useApplication({
+    id: 'xxx',
+    type: 'global',
+    url: 'http://example.com/script.js',
+});
 ```
 
-This kind of apps is very similar to [Webpack Module Federation Apps](#webpack-module-federation-apps) but the registration is a bit different, it uses a JSONP-style function: 
+This kind of apps is very similar to [Webpack Module Federation Apps](#webpack-module-federation-apps) but the registration is a bit different, it uses a JSONP-style function:
 
 ```js
-import {registerAppCallback} from "@ringcentral/web-apps-common";
+import {registerAppCallback} from '@ringcentral/web-apps-common';
 
-registerAppCallback('global', (node) => { // ID on host must match: global
+registerAppCallback('global', (node) => {
+    // ID on host must match: global
     // do something with the provided node
     node.innerText = Date.now();
     return () => {
@@ -850,12 +855,13 @@ registerAppCallback('global', (node) => { // ID on host must match: global
 #### React-based Global Apps JSONP
 
 ```js
-import React from "react";
-import {render, unmountComponentAtNode} from "react-dom";
-import {registerAppCallback} from "@ringcentral/web-apps-react";
-import App from "./App";
+import React from 'react';
+import {render, unmountComponentAtNode} from 'react-dom';
+import {registerAppCallback} from '@ringcentral/web-apps-react';
+import App from './App';
 
-registerAppCallback('global', (node) => { // ID on host must match: global
+registerAppCallback('global', (node) => {
+    // ID on host must match: global
     ReactDOM.render(<App foo={node.getAttribute('foo')} />, node);
     return () => ReactDOM.unmountComponentAtNode(node);
 });
@@ -866,43 +872,43 @@ registerAppCallback('global', (node) => { // ID on host must match: global
 Global apps support a shortcut, if you know that both Host and App are written using the same framework, you can omit the usage of events and interact with `Component` directly.
 
 ```js
-    const {error, Component, node, loading} = useApplication({
-        id: 'xxx',
-        type: 'global',
-        url: 'http://example.com/script.js',
-        options: {
-            federation: true, // optional
-            direct: true
-        }
-    });
+const {error, Component, node, loading} = useApplication({
+    id: 'xxx',
+    type: 'global',
+    url: 'http://example.com/script.js',
+    options: {
+        federation: true, // optional
+        direct: true,
+    },
+});
 
-    return <Component foo="bar" />; // here you can use component as you normally would
+return <Component foo="bar" />; // here you can use component as you normally would
 ```
 
 In Webpack Module Federation mode should simply export the component:
 
 ```js
-const Cmp = ({node}) => (<div>...</div>); // node will still be provided as prop
+const Cmp = ({node}) => <div>...</div>; // node will still be provided as prop
 export default Cmp;
 ```
 
 In this case the `registerAppCallback` can be called with React component for example:
 
 ```js
-const Cmp = ({node}) => (<div>...</div>); // node will still be provided as prop
+const Cmp = ({node}) => <div>...</div>; // node will still be provided as prop
 registerAppCallback('global', Cmp);
-``` 
+```
 
 ### IFrame Apps
 
 From host standpoint app injection is as follows:
 
 ```js
-    const {error, Component, node, loading} = useApplication({
-        id: 'xxx',
-        type: 'iframe',
-        url: 'http://example.com/script.js'
-    });
+const {error, Component, node, loading} = useApplication({
+    id: 'xxx',
+    type: 'iframe',
+    url: 'http://example.com/script.js',
+});
 ```
 
 #### Location Sync
@@ -910,7 +916,7 @@ From host standpoint app injection is as follows:
 In order to enable location sync we need to create a special synchronization object:
 
 ```js
-import {IFrameSync} from "@ringcentral/web-apps-sync-iframe";
+import {IFrameSync} from '@ringcentral/web-apps-sync-iframe';
 
 const iFrameSync = new IFrameSync({history: 'html5', id: 'id-as-registered-on-host'}); // or 'hash' or custom implementation
 ```
@@ -925,9 +931,9 @@ provide a `sendInitialLocation` flag.
 From now on we may use the sync object to send/receive events from the Host application by using `eventTarget` property:
 
 ```js
-import {dispatchEvent, eventType} from "@ringcentral/web-apps-common";
+import {dispatchEvent, eventType} from '@ringcentral/web-apps-common';
 
-iFrameSync.getEventTarget().addEventListener(eventType.message, message => {});
+iFrameSync.getEventTarget().addEventListener(eventType.message, (message) => {});
 dispatchEvent(iFrameSync.getEventTarget(), eventType.message, {foo: 'bar'});
 ```
 
@@ -953,30 +959,30 @@ App code is almost the same as in [React-based Web Component example](#react-bas
 
 ```js
 // App.js
-import React from "react";
-import {IFrameSync} from "@ringcentral/web-apps-sync-iframe";
-import {dispatchEvent, useListenerEffect, eventType} from "@ringcentral/web-apps-react";
+import React from 'react';
+import {IFrameSync} from '@ringcentral/web-apps-sync-iframe';
+import {dispatchEvent, useListenerEffect, eventType} from '@ringcentral/web-apps-react';
 
 const iFrameSync = new IFrameSync({history: 'html5', id: 'id-as-registered-on-host'}); // or 'hash' or custom implementation
 const node = iFrameSync.getEventTarget();
 
 const Page = () => {
-
     // set up local state
     const [messages, setMessages] = useState([]);
 
     // set up event listener for local & host events
-    useListenerEffect(node, eventType.message, event => setMessages(messages => [...messages, event.detail]));
+    useListenerEffect(node, eventType.message, (event) => setMessages((messages) => [...messages, event.detail]));
 
     // set up event dispatcher
     const sendMessage = () => dispatchEvent(node, eventType.message, {toHost: 'message to host'});
 
-    return (<>
-        <div>{JSON.stringify(messages)}</div>
-        <button onClick={sendMessage}>Send message</button>
-    </>);
-
-}
+    return (
+        <>
+            <div>{JSON.stringify(messages)}</div>
+            <button onClick={sendMessage}>Send message</button>
+        </>
+    );
+};
 ```
 
 In the example above the history will be synchronized auto-magically, but if you want full control you can supply your instance of `react-router` history like so:
@@ -989,11 +995,7 @@ import {Router} from 'react-router-dom';
 const history = createBrowserHistory();
 const iFrameSync = new IFrameSync({history, id: 'id-as-registered-on-host'});
 
-export default () => (
-    <Router history={history}>
-        {/* normal route config as usual */}
-    </Router>
-);
+export default () => <Router history={history}>{/* normal route config as usual */}</Router>;
 ```
 
 #### Origins in Apps
@@ -1015,7 +1017,10 @@ Keep in mind that one app may appear in many Hosts (production, staging) so this
 For non-browserified applications a pre-built UMD bundle may be used:
 
 ```html
-<script type="text/javascript" src="node_modules/@ringcentral/web-apps-sync-iframe/dist/ringcentral-web-apps-iframe.js"></script>
+<script
+    type="text/javascript"
+    src="node_modules/@ringcentral/web-apps-sync-iframe/dist/ringcentral-web-apps-iframe.js"
+></script>
 ```
 
 And then global object `RCApps.IFrameSDK` can be utilized to get all needed utils:
@@ -1024,32 +1029,32 @@ And then global object `RCApps.IFrameSDK` can be utilized to get all needed util
 const {eventType, dispatchEvent, IFrameSync} = RCApps.IFrameSDK; // and so on
 
 const sync = new IFrameSync({
-    history: 'html5', 
+    history: 'html5',
     id: 'id-as-registered-on-host',
-    sendInitialLocation: true // useful in apps that does not use HTML5 history and reload on navigation
+    sendInitialLocation: true, // useful in apps that does not use HTML5 history and reload on navigation
 });
 ```
 
 ## Repo Structure
 
-- `demo`
-    - `admin` &mdash; simple demo with full page transitions
-    - `host` &mdash; Create React App Host application
-    - `iframe` &mdash; Create React App IFrame application
-    - `react` &mdash; Webpack React-based Web Component or Global application
-    - `vue` &mdash; Webpack Vue-based JS Web Component application
-- `packages`
-    - `common` &mdash; common application SDK
-    - `host` &mdash; SDK for Hosts
-    - `host-css` &mdash; common CSS for hosts
-    - `host-react` &mdash; React SDK for Hosts
-    - `host-web-component` &mdash; Web Component SDK for Hosts
-    - `react` &mdash; fix for React Router
-    - `sync` &mdash; synchronization SDK
-    - `sync-host` &mdash; synchronization SDK for Host
-    - `sync-iframe` &mdash; synchronization SDK for IFrame
-    - `sync-react` &mdash; React wrapper for IFrame
-    - `sync-web-component` &mdash; Web Component for IFrame 
+-   `demo`
+    -   `admin` &mdash; simple demo with full page transitions
+    -   `host` &mdash; Create React App Host application
+    -   `iframe` &mdash; Create React App IFrame application
+    -   `react` &mdash; Webpack React-based Web Component or Global application
+    -   `vue` &mdash; Webpack Vue-based JS Web Component application
+-   `packages`
+    -   `common` &mdash; common application SDK
+    -   `host` &mdash; SDK for Hosts
+    -   `host-css` &mdash; common CSS for hosts
+    -   `host-react` &mdash; React SDK for Hosts
+    -   `host-web-component` &mdash; Web Component SDK for Hosts
+    -   `react` &mdash; fix for React Router
+    -   `sync` &mdash; synchronization SDK
+    -   `sync-host` &mdash; synchronization SDK for Host
+    -   `sync-iframe` &mdash; synchronization SDK for IFrame
+    -   `sync-react` &mdash; React wrapper for IFrame
+    -   `sync-web-component` &mdash; Web Component for IFrame
 
 ## Demo
 
@@ -1058,7 +1063,6 @@ npm install
 ```
 
 This will install Lerna and all monorepo dependencies.
-
 
 Put `.env` file in the repo root in order to launch the demo:
 
@@ -1076,6 +1080,8 @@ REACT_APP_IFRAME_PORT=4003
 REACT_APP_ADMIN_PORT=4005
 REACT_APP_REACT_MENU_PORT=4006
 REACT_APP_ANGULAR_PORT=4007
+REACT_APP_FED_PORT=4008
+REACT_APP_REACT_MENU_IFRAME_PORT=4009
 
 REACT_APP_PRODUCTION_HOST=http://localhost
 ```
