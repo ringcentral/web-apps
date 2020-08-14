@@ -53,19 +53,24 @@ export class HostSync extends Sync {
 
         this.iframe = iframe;
 
-        this.iframe.src = url + this.getState();
+        try {
+            const {origin, search} = new URL(url);
+            this.iframe.src = `${origin}${this.getState()}${search}`;
 
-        !this.iframe['iFrameResizer'] &&
-            iFrameResize(
-                {
-                    checkOrigin: false,
-                    minHeight,
-                    heightCalculationMethod: 'min',
-                    sizeWidth: true,
-                    tolerance: 50,
-                },
-                this.iframe,
-            );
+            !this.iframe['iFrameResizer'] &&
+                iFrameResize(
+                    {
+                        checkOrigin: false,
+                        minHeight,
+                        heightCalculationMethod: 'min',
+                        sizeWidth: true,
+                        tolerance: 50,
+                    },
+                    this.iframe,
+                );
+        } catch (e) {
+            //ignore
+        }
     }
 
     public destroy = () => {
