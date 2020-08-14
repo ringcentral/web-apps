@@ -54,8 +54,8 @@ export class HostSync extends Sync {
         this.iframe = iframe;
 
         try {
-            const {origin, search} = new URL(url);
-            this.iframe.src = `${origin}${this.getState()}${search}`;
+            const {origin, pathname, search} = new URL(url);
+            this.iframe.src = `${origin}${pathname}${this.getState()}${search}`;
 
             !this.iframe['iFrameResizer'] &&
                 iFrameResize(
