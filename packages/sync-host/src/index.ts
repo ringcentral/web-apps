@@ -29,8 +29,8 @@ export class HostSync extends Sync {
         url,
         iframe,
         history,
+        minHeight, // needed to accomodate login
         tracking = trackingMode.hash,
-        minHeight = 500, // needed to accomodate login
         origin = undefined,
     }) {
         super({
@@ -57,20 +57,23 @@ export class HostSync extends Sync {
             const {origin, pathname, search} = new URL(url);
             const updatedPathname = pathname === '/' ? '' : pathname;
             this.iframe.src = `${origin}${updatedPathname}${this.getState()}${search}`;
+        } catch (error) {
+            console.error('Invalid URL of iframe', url);
+        }
 
-            !this.iframe['iFrameResizer'] &&
-                iFrameResize(
-                    {
-                        checkOrigin: false,
-                        minHeight,
-                        heightCalculationMethod: 'min',
-                        sizeWidth: true,
-                        tolerance: 50,
-                    },
-                    this.iframe,
-                );
-        } catch (e) {
-            //ignore
+        if (!this.iframe['iFrameResizer']) {
+            console.error('Miss some initiation, like iFrameResizer');
+
+            iFrameResize(
+                {
+                    checkOrigin: false,
+                    minHeight,
+                    heightCalculationMethod: 'min',
+                    sizeWidth: true,
+                    tolerance: 50,
+                },
+                this.iframe,
+            );
         }
     }
 
