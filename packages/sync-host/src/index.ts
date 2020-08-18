@@ -58,12 +58,11 @@ export class HostSync extends Sync {
             const updatedPathname = pathname === '/' ? '' : pathname;
             this.iframe.src = `${origin}${updatedPathname}${this.getState()}${search}`;
         } catch (error) {
+            this.iframe.src = url + this.getState();
             console.error('Invalid URL of iframe', url);
         }
 
-        if (!this.iframe['iFrameResizer']) {
-            console.error('Miss some initiation, like iFrameResizer');
-
+        !this.iframe['iFrameResizer'] &&
             iFrameResize(
                 {
                     checkOrigin: false,
@@ -74,7 +73,6 @@ export class HostSync extends Sync {
                 },
                 this.iframe,
             );
-        }
     }
 
     public destroy = () => {
