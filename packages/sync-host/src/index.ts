@@ -29,8 +29,8 @@ export class HostSync extends Sync {
         url,
         iframe,
         history,
-        minHeight, // needed to accomodate login
         tracking = trackingMode.hash,
+        minHeight = 500, // needed to accomodate login
         origin = undefined,
     }) {
         super({
