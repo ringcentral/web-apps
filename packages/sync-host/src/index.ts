@@ -53,7 +53,14 @@ export class HostSync extends Sync {
 
         this.iframe = iframe;
 
-        this.iframe.src = url + this.getState();
+        try {
+            const {origin, pathname, search} = new URL(url);
+            const updatedPathname = pathname === '/' ? '' : pathname;
+            this.iframe.src = `${origin}${updatedPathname}${this.getState()}${search}`;
+        } catch (error) {
+            this.iframe.src = url + this.getState();
+            console.error('Invalid URL of iframe', url);
+        }
 
         !this.iframe['iFrameResizer'] &&
             iFrameResize(
