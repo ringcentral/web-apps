@@ -20,7 +20,7 @@ Quick remark. This framework is most useful when you have a system where apps ca
 
 ## TOC
 
-- [App Typs](#app-types)
+- [App Types](#app-types)
 - [How It Works](#how-it-works)
 - [Host](#host)
     - [React Host](#react-host)
