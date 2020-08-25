@@ -46,7 +46,7 @@ Quick remark. This framework is most useful when you have a system where apps ca
 
 ## App Types
 
-There are 3 kind of embeddable applications: IFrame and Web Component based.
+There are 3 kind of embeddable applications: IFrame, Web Component and Global based.
 
 An IFrame application (type `iframe`) is rendered inside the `iframe` and can synchronize it's URL and size with the main application.
 
@@ -1076,6 +1076,8 @@ REACT_APP_IFRAME_PORT=4003
 REACT_APP_ADMIN_PORT=4005
 REACT_APP_REACT_MENU_PORT=4006
 REACT_APP_ANGULAR_PORT=4007
+REACT_APP_FED_PORT=4008
+REACT_APP_REACT_MENU_IFRAME_PORT=4009
 
 REACT_APP_PRODUCTION_HOST=http://localhost
 ```
