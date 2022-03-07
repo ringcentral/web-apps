@@ -96,6 +96,7 @@ export class HostSync extends Sync {
             case trackingMode.hash:
                 return removeHash(new URL(super.getState(), location.origin).hash);
             case trackingMode.disabled:
+                return '';
             case trackingMode.full:
             case trackingMode.slave:
                 return super.getState();
