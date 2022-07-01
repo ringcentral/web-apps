@@ -122,7 +122,7 @@ export class GlobalApp extends JSApp {
         const module = this.options.module || './index';
         const exportName = this.options.exportName || 'default';
 
-        await super.load();
+        await this.loadedSource;
         // Initializes the share scope. This fills it with known provided modules from this build and all remotes
         // @ts-ignore
         await __webpack_init_sharing__(defaultScope);
