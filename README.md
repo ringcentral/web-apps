@@ -533,7 +533,7 @@ From host standpoint app injection is as follows:
     });
 ```
 
-Web Compoent's DOM node can be used to listen to Host events inside the React app, to do that we need to provide a node
+Web Component's DOM node can be used to listen to Host events inside the React app, to do that we need to provide a node
 to React app which resides inside the Web Component.
 
 The bare minimum what Web Component App must do is simply register the Custom Element following the pattern `web-app-ID` (ID should match the ID on Host):
